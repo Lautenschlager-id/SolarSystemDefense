@@ -1,2 +1,0 @@
-C:\Users\taikau\Desktop\SolarSystemDefense\SolarSystemDefense\SolarSystemDefenseContent\obj\x86\Debug\SolarSystemDefenseContent.contentprojResolveAssemblyReference.cache
-C:\Users\taikau\Desktop\SolarSystemDefense\SolarSystemDefense\SolarSystemDefenseContent\obj\x86\Debug\SolarSystemDefenseContent.contentproj.CoreCompileInputs.cache
