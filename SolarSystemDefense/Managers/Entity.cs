@@ -8,7 +8,7 @@ namespace SolarSystemDefense
     {
         public Boolean Visible = true;
         public Vector2 Position, Velocity;
-        public float Angle;
+        public float Angle, Radius = 1;
 
         protected Texture2D Sprite;
         protected Color ObjectColor = Color.White;

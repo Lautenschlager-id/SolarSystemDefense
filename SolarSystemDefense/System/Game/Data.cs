@@ -1,15 +1,37 @@
-﻿namespace SolarSystemDefense
+﻿using System.Collections.Generic;
+
+namespace SolarSystemDefense
 {
     static class Data
     {
-        public enum Type
+        public class ShooterInfo
         {
-            Mercury = 0,
-            Venus = 1,
-            Mars = 2,
-            Jupiter = 3
+            public int Cooldown { get; private set; }
+            public float Speed { get; set; }
+            public int Radius { get; private set; }
+            public int Damage { get; private set; }
+
+            public Utils.AssignOnce<float> CollisionRadius = new Utils.AssignOnce<float>();
+
+            public int defaultCooldown { get; private set; }
+            public float defaultSpeed { get; private set; }
+            public int defaultRadius { get; private set; }
+            public int defaultDamage { get; private set; }
+
+            public ShooterInfo(int Damage, int Cooldown, float Speed, int Radius)
+            {
+                this.Damage = defaultDamage = Damage;
+                this.Cooldown = defaultCooldown = Cooldown;
+                this.Speed = defaultSpeed = Speed;
+                this.Radius = defaultRadius = Radius;
+            }
         }
 
-        public static int[] ShooterCooldown = { 15, 30, 30, 60 };
+        public static Dictionary<int, ShooterInfo> ShooterData = new Dictionary<int, ShooterInfo>() {
+            { 0, new ShooterInfo(1, 25, 8, 80) },
+            { 1, new ShooterInfo(3, 35, 5, 150) },
+            { 2, new ShooterInfo(2, 40, 6, 110) },
+            { 3, new ShooterInfo(10, 100, 2, 280) },
+        };
     }
 }   

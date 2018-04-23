@@ -4,33 +4,33 @@ namespace SolarSystemDefense
 {
     class Shooter : Entity
     {
-        Data.Type ShooterType;
+        int ShooterType;
         int Timer;
 
-        public Shooter(Data.Type ShooterType, Vector2 Position)
+        public Shooter(int ShooterType, Vector2 Position, float Angle)
         {
             this.ShooterType = ShooterType;
 
-            Sprite = Graphic.Shooters[(int)ShooterType];
+            Sprite = Graphic.Shooters[ShooterType];
 
-            Timer = Data.ShooterCooldown[(int)ShooterType];
+            Timer = Data.ShooterData[ShooterType].Cooldown;
 
             this.Position = Position;
             Velocity = Vector2.Zero;
 
-            Angle = 0;
+            this.Angle = Angle;
         }
 
         public void Shoot()
         {
-            Timer = Data.ShooterCooldown[(int)ShooterType];
+            Timer = Data.ShooterData[ShooterType].defaultCooldown;
 
             Vector2 direction = Control.MouseCoordinates - Position;
             if (direction.LengthSquared() > 0)
             {
                 float Angle = direction.Angle();
 
-                Vector2 Velocity = Maths.PolarToVector(Angle, 2f);
+                Vector2 Velocity = Maths.PolarToVector(Angle, Data.ShooterData[ShooterType].Speed);
 
                 Quaternion EulerAim = Quaternion.CreateFromYawPitchRoll(0, 0, Angle);
                 // The vector is set as Y, X

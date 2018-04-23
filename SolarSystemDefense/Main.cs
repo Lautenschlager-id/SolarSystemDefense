@@ -19,9 +19,9 @@ namespace SolarSystemDefense
             }
         }
 
-        Game_Stage PLAY_GAME;
+        wGame PLAY_GAME;
 
-        GraphicsDeviceManager graphics;
+        static GraphicsDeviceManager graphics;
         SpriteBatch BackgroundDepth, MediumDepth, ForegroundDepth;
 
         public static Main Instance { get; private set; }
@@ -48,6 +48,13 @@ namespace SolarSystemDefense
             Instance = this;
         }
 
+        public static void Resize(int Width, int Height)
+        {
+            graphics.PreferredBackBufferWidth = (int)MathHelper.Clamp(Width, 50, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width);
+            graphics.PreferredBackBufferHeight = (int)MathHelper.Clamp(Height, 50f, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height);
+            graphics.ApplyChanges();
+        }
+
         protected override void Initialize()
         {
             base.Initialize();
@@ -61,7 +68,7 @@ namespace SolarSystemDefense
 
             Graphic.LoadContent(Content);
 
-            PLAY_GAME = new Game_Stage();
+            PLAY_GAME = new wGame();
         }
 
         protected override void UnloadContent(){}

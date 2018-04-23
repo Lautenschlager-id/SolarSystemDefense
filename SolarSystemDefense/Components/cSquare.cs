@@ -12,11 +12,11 @@ namespace SolarSystemDefense
         Texture2D ContentTexture;
         Vector2 ContentPosition, ContentRadius;
 
-        public Vector2 ContentSize
+        public Texture2D GetContent
         {
             get
             {
-                return new Vector2(ContentTexture.Width, ContentTexture.Height);
+                return ContentTexture;
             }
         }
 

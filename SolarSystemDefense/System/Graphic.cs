@@ -18,7 +18,11 @@ namespace SolarSystemDefense
             MousePointer = content.Load<Texture2D>("Graphic/mousepointer");
 
             Bullets = Enumerable.Range(1, 4).Select(id => content.Load<Texture2D>("Graphic/Objects/Bullets/bullet_" + (id - 1))).ToArray();
+
             Shooters = Enumerable.Range(1, 4).Select(id => content.Load<Texture2D>("Graphic/Objects/Shooters/shooter_" + (id - 1))).ToArray();
+
+            for (int i = 0; i < 4; i++)
+                Data.ShooterData[i].CollisionRadius.Value = Shooters[i].Width / 2f;
         }
     }
 }

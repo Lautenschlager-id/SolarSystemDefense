@@ -6,25 +6,38 @@ namespace SolarSystemDefense
 {
     abstract class Component
     {
-        public Boolean Visible = true, Remove = false;
-        public Boolean OnClick = false, MouseHover = false;
+        public Boolean Visible = true, Remove = false, MouseHover = false;
         public float Alpha = 1f;
         // [] = Not hover, Hover
-        public Color[] ComponentColor, ContentColor;
+        public Color[] ComponentColor;
 
         protected Texture2D Texture;
         protected Rectangle Shape, MouseShape;
 
-        public int ID { get; set; }
-        public Vector2 ComponentSize
+        public Texture2D GetComponent
         {
             get
             {
-                return new Vector2(Texture.Width, Texture.Height);
+                return Texture;
+            }
+        }
+        public Vector2 GetPosition
+        {
+            get
+            {
+                return new Vector2(Shape.X, Shape.Y);
+            }
+        }
+        public Vector2 GetSize
+        {
+            get
+            {
+                return new Vector2(Shape.Width, Shape.Height);
             }
         }
 
-        public event EventHandler EventOnClick;
+        public event EventHandler OnClick;
+        public int ID { get; set; }
 
         protected Component(int XPosition = 10, int YPosition = 10, int Width = 60, int Height = 20)
         {
@@ -43,9 +56,9 @@ namespace SolarSystemDefense
             Shape.Y = YPosition;
         }
 
-        private void TriggerOnClick()
+        private void eventOnClick()
         {
-            EventOnClick?.Invoke(this, null);
+            OnClick?.Invoke(this, null);
         }
 
         public virtual void Update()
@@ -54,9 +67,9 @@ namespace SolarSystemDefense
             {
                 MouseShape = new Rectangle((int)Control.MouseCoordinates.X, (int)Control.MouseCoordinates.Y, 1, 1);
                 MouseHover = MouseShape.Intersects(Shape);
-                OnClick = MouseHover ? Control.MouseClicked : false;
-                if (OnClick)
-                    TriggerOnClick();
+
+                if (MouseHover ? Control.MouseClicked : false)
+                    eventOnClick();
             }
         }
 

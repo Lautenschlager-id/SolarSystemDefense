@@ -6,11 +6,12 @@ namespace SolarSystemDefense
     {
         public int Damage { get; private set; }
         
-        public Bullet(Data.Type BulletType, Vector2 Position, Vector2 Velocity) : base()
+        public Bullet(int BulletType, Vector2 Position, Vector2 Velocity) : base()
         {
-            Sprite = Graphic.Bullets[(int)BulletType];
+            Sprite = Graphic.Bullets[BulletType];
+            Radius = Sprite.Width / 2f;
 
-            Damage = (int)BulletType + 1;
+            Damage = Data.ShooterData[BulletType].Damage;
 
             this.Position = Position;
             this.Velocity = Velocity;
@@ -24,7 +25,7 @@ namespace SolarSystemDefense
                 Angle += MathHelper.ToRadians(Maths.Random.Next(5, 10));
             Position += Velocity;
 
-            if (!Main.ViewPort.Bounds.Contains(Position.toPoint()))
+            if (!Main.ViewPort.Bounds.Contains(Position.ToPoint()))
                 Visible = false;
         }
     }
