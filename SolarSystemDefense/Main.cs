@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace SolarSystemDefense
 {
@@ -8,18 +7,10 @@ namespace SolarSystemDefense
     {
         public enum GameState
         {
-            Running,
+            StageEditor,
+            Playing,
         }
-        static GameState hCurrentGameState = GameState.Running;
-        public static GameState CurrentGameState
-        {
-            get
-            {
-                return CurrentGameState;
-            }
-        }
-
-        wGame PLAY_GAME;
+        public static GameState CurrentGameState = GameState.Playing;
 
         static GraphicsDeviceManager graphics;
         SpriteBatch BackgroundDepth, MediumDepth, ForegroundDepth;
@@ -38,6 +29,7 @@ namespace SolarSystemDefense
                 return new Vector2(ViewPort.Width, ViewPort.Height);
             }
         }
+        public static Rectangle GameBound { get; set; }
 
         public Main()
         {
@@ -46,6 +38,21 @@ namespace SolarSystemDefense
 
             Window.Title = "Solar System Defense";
             Instance = this;
+        }
+
+        static GameStage CurrentStage;
+        public static void SetStage()
+        {
+            ComponentManager.Clear();
+            switch (CurrentGameState)
+            {
+                case GameState.Playing:
+                    CurrentStage = new wGame();
+                    break;
+                case GameState.StageEditor:
+                    CurrentStage = new wStageEditor();
+                    break;
+            }
         }
 
         public static void Resize(int Width, int Height)
@@ -67,8 +74,9 @@ namespace SolarSystemDefense
             ForegroundDepth = new SpriteBatch(GraphicsDevice);
 
             Graphic.LoadContent(Content);
+            Font.LoadContent(Content);
 
-            PLAY_GAME = new wGame();
+            SetStage();
         }
 
         protected override void UnloadContent(){}
@@ -78,12 +86,7 @@ namespace SolarSystemDefense
             Control.Update();
             ComponentManager.Update();
 
-            switch (hCurrentGameState)
-            {
-                case GameState.Running:
-                    PLAY_GAME.Update();
-                    break;
-            }
+            CurrentStage?.Update();
 
             base.Update(gameTime);
         }
@@ -100,12 +103,7 @@ namespace SolarSystemDefense
             MediumDepth.Begin();
             BackgroundDepth.Begin();
             ComponentManager.Draw(BackgroundDepth, MediumDepth, ForegroundDepth);
-            switch (hCurrentGameState)
-            {
-                case GameState.Running:
-                    PLAY_GAME.Draw(BackgroundDepth, MediumDepth, ForegroundDepth);
-                    break;
-            }            
+            CurrentStage?.Draw(BackgroundDepth, MediumDepth, ForegroundDepth);
             BackgroundDepth.End();
             MediumDepth.End();
             ForegroundDepth.End();

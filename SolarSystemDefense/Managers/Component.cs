@@ -6,14 +6,21 @@ namespace SolarSystemDefense
 {
     abstract class Component
     {
-        public Boolean Visible = true, Remove = false, MouseHover = false;
+        public bool Visible = true, Remove = false, MouseHover = false;
         public float Alpha = 1f;
         // [] = Not hover, Hover
-        public Color[] ComponentColor;
+        public Color[] ComponentColor = Color.White.Collection(), ContentColor = Color.White.Collection();
 
         protected Texture2D Texture;
         protected Rectangle Shape, MouseShape;
 
+        public Rectangle GetDimension
+        {
+            get
+            {
+                return Shape;
+            }
+        }
         public Texture2D GetComponent
         {
             get
@@ -39,10 +46,10 @@ namespace SolarSystemDefense
         public event EventHandler OnClick;
         public int ID { get; set; }
 
-        protected Component(int XPosition = 10, int YPosition = 10, int Width = 60, int Height = 20)
+        protected Component(int XPosition, int YPosition, int Width, int Height)
         {
-            Width = Width < 0 ? 1 : Width;
-            Height = Height < 0 ? 1 : Height;
+            Width = Width < 1 ? 1 : Width;
+            Height = Height < 1 ? 1 : Height;
 
             Texture = new Texture2D(Main.Instance.GraphicsDevice, Width, Height);
             Texture.Fill(Width * Height);
@@ -55,6 +62,30 @@ namespace SolarSystemDefense
             Shape.X = XPosition;
             Shape.Y = YPosition;
         }
+        public virtual void SetPosition() { }
+
+        public virtual Vector2 GetCoordinates(Rectangle Dimension, string Align, int XAxis = 0, int YAxis = 0, int Margin = Font.Margin, float Width = 1f, float Height = 1f)
+        {
+            if (Align.Contains("xcenter"))
+                XAxis += (int)(Dimension.X + Dimension.Width / 2 - Width / 2);
+            else if (Align.Contains("right"))
+                XAxis += (int)(Dimension.X + Dimension.Width - Width - 5);
+            else if (Align.Contains("left"))
+                XAxis += Dimension.X + 5;
+
+            if (Align.Contains("ycenter"))
+                YAxis += (int)(Dimension.Y + Dimension.Height / 2 - Height / 2);
+            else if (Align.Contains("top"))
+                YAxis += Dimension.Y + 5;
+            else if (Align.Contains("bottom"))
+                YAxis += (int)(Dimension.Y + Dimension.Height - Height - 5);
+
+            return new Vector2(XAxis, YAxis);
+        }
+        public virtual Vector2 GetCoordinates(string Align, int XAxis = 0, int YAxis = 0, int Margin = Font.Margin, float Width = 1f, float Height = 1f)
+        {
+            return GetCoordinates(new Rectangle(0, 0, (int)Main.ScreenDimension.X, (int)Main.ScreenDimension.Y), Align, 0, 0, Margin, Width, Height);
+        }
 
         private void eventOnClick()
         {
@@ -63,16 +94,16 @@ namespace SolarSystemDefense
 
         public virtual void Update()
         {
-            if (!Remove)
+            if (!Remove && Visible)
             {
                 MouseShape = new Rectangle((int)Control.MouseCoordinates.X, (int)Control.MouseCoordinates.Y, 1, 1);
                 MouseHover = MouseShape.Intersects(Shape);
 
-                if (MouseHover ? Control.MouseClicked : false)
+                if (MouseHover && Control.MouseClicked)
                     eventOnClick();
             }
         }
 
-        public virtual void Draw(SpriteBatch BackgroundDepth, SpriteBatch MediumDepth, SpriteBatch ForegroundDepth) { }
+        public abstract void Draw(SpriteBatch BackgroundDepth, SpriteBatch MediumDepth, SpriteBatch ForegroundDepth);
     }
 }

@@ -10,7 +10,7 @@ namespace SolarSystemDefense
         {
             private Type value;
 
-            public Boolean hasValue { get; private set; }
+            public bool hasValue { get; private set; }
 
             public Type Value
             {
@@ -68,6 +68,65 @@ namespace SolarSystemDefense
         public static Texture2D CreateCircle(int radius, Color borderColor)
         {
             return CreateCircle(radius, borderColor, Color.Transparent);
+        }
+
+        public class Line
+        {
+            private Vector2 p1, p2;
+
+            public Vector2 PositionA
+            {
+                get
+                {
+                    return p1;
+                }
+                set
+                {
+                    p1 = value;
+                    SetValues();
+                }
+            }
+            public Vector2 PositionB
+            {
+                get
+                {
+                    return p2;
+                }
+                set
+                {
+                    p2 = value;
+                    SetValues();
+                }
+            }
+            public Color color;
+            public float alpha;
+
+            Texture2D pixel = Graphic.Pixel;
+
+            int border;
+            Rectangle rect;
+            float angle;
+
+            public Line(Vector2 PositionA, Vector2 PositionB, int border, Color color, float alpha = 1)
+            {
+                p1 = PositionA;
+                p2 = PositionB;
+                this.border = border;
+                this.color = color;
+                this.alpha = alpha;
+                SetValues();
+            }
+
+            public void SetValues()
+            {
+                angle = p2.Angle(p1);
+                rect = new Rectangle((int)p1.X, (int)p1.Y, (int)Vector2.Distance(p1, p2), border);
+            }
+
+            public void Draw(SpriteBatch Depth)
+            {
+                Depth.Draw(pixel, rect, null, color * alpha, angle, Vector2.Zero, SpriteEffects.None, 0);
+            }
         }
     }
 }

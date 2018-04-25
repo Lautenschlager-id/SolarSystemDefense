@@ -6,6 +6,7 @@ namespace SolarSystemDefense
 {
     class Control
     {
+        private static KeyboardState KeyCurrent, KeyLast;
         private static MouseState MouseCurrent, MouseLast;
 
         public static Vector2 MouseCoordinates
@@ -15,7 +16,7 @@ namespace SolarSystemDefense
                 return new Vector2(MouseCurrent.X, MouseCurrent.Y);
             }
         }
-        public static Boolean MouseClicked
+        public static bool MouseClicked
         {
             get
             {
@@ -32,10 +33,18 @@ namespace SolarSystemDefense
             }
         }
         
+        public static bool KeyDown(Keys key)
+        {
+            return KeyLast.IsKeyUp(key) && KeyCurrent.IsKeyDown(key);
+        }
+
         public static void Update()
         {
             MouseLast = MouseCurrent;
             MouseCurrent = Mouse.GetState();
+
+            KeyLast = KeyCurrent;
+            KeyCurrent = Keyboard.GetState();
         }
     }
 }

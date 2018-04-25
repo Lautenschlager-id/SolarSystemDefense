@@ -33,5 +33,26 @@ namespace SolarSystemDefense
             { 2, new ShooterInfo(2, 40, 6, 110) },
             { 3, new ShooterInfo(10, 100, 2, 280) },
         };
+
+        public class EnemyInfo
+        {
+            public float Speed { get; set; }
+            public int Life { get; set; }
+
+            public Utils.AssignOnce<float> CollisionRadius = new Utils.AssignOnce<float>();
+
+            public EnemyInfo(float Speed, int Life)
+            {
+                this.Speed = Speed;
+                this.Life = Life;
+            }
+        }
+
+        public static Dictionary<int, EnemyInfo> EnemyData = new Dictionary<int, EnemyInfo>() {
+            { 0, new EnemyInfo(2, 3) },
+            { 1, new EnemyInfo(3, 6) },
+            { 2, new EnemyInfo(5, 10) },
+        };
+
     }
 }   

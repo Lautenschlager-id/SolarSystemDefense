@@ -1,8 +1,11 @@
+using System;
+
 namespace SolarSystemDefense
 {
-#if WINDOWS || XBOX
+#if WINDOWS
     static class Program
     {
+        [STAThread]
         static void Main(string[] args)
         {
             using (Main game = new Main())

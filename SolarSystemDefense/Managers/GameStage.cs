@@ -1,10 +1,10 @@
-﻿namespace SolarSystemDefense
+﻿using Microsoft.Xna.Framework.Graphics;
+
+namespace SolarSystemDefense
 {
     abstract class GameStage
     {
-        public GameStage()
-        {
-
-        }
+        public abstract void Update();
+        public abstract void Draw(SpriteBatch BackgroundDepth, SpriteBatch MediumDepth, SpriteBatch ForegroundDepth);
     }
 }

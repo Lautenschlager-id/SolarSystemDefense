@@ -11,6 +11,9 @@ namespace SolarSystemDefense
 
         public static Texture2D[] Bullets { get; private set; }
         public static Texture2D[] Shooters { get; private set; }
+        public static Texture2D[] Enemies { get; private set; }
+
+        public static Texture2D Pixel { get; private set; }
 
         public static void LoadContent(ContentManager content)
         {
@@ -23,6 +26,13 @@ namespace SolarSystemDefense
 
             for (int i = 0; i < 4; i++)
                 Data.ShooterData[i].CollisionRadius.Value = Shooters[i].Width / 2f;
+
+            Pixel = content.Load<Texture2D>("Graphic/pixel");
+
+            Enemies = Enumerable.Range(1, 3).Select(id => content.Load<Texture2D>("Graphic/Objects/Enemies/enemy_" + (id - 1))).ToArray();
+
+            for (int i = 0; i < 3; i++)
+                Data.EnemyData[i].CollisionRadius.Value = Enemies[i].Width / 2f;
         }
     }
 }

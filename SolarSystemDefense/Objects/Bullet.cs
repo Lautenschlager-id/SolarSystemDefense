@@ -25,7 +25,7 @@ namespace SolarSystemDefense
                 Angle += MathHelper.ToRadians(Maths.Random.Next(5, 10));
             Position += Velocity;
 
-            if (!Main.ViewPort.Bounds.Contains(Position.ToPoint()))
+            if (!Main.GameBound.Contains(Position.ToPoint()))
                 Visible = false;
         }
     }

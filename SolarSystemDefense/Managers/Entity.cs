@@ -6,7 +6,7 @@ namespace SolarSystemDefense
 {
     abstract class Entity
     {
-        public Boolean Visible = true;
+        public bool Visible = true;
         public Vector2 Position, Velocity;
         public float Angle, Radius = 1;
 
