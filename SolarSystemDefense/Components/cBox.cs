@@ -10,7 +10,6 @@ namespace SolarSystemDefense
         bool ToggleColorOnHover;
 
         Texture2D ContentTexture;
-        Vector2 ContentPosition, ContentRadius;
 
         cLabel label;
         SpriteFont LabelFont;
@@ -22,6 +21,8 @@ namespace SolarSystemDefense
                 return ContentTexture;
             }
         }
+        public Vector2 ContentRadius { get; private set; }
+        public Vector2 ContentPosition { get; private set; }
         public string SourceText
         {
             get
@@ -58,7 +59,7 @@ namespace SolarSystemDefense
                     label.ContentColor = value;
             }
         }
- 
+
         public cBox(int XPosition, int YPosition, int Width = 50, int Height = 50, bool ToggleColorOnHover = false)
             : base(XPosition, YPosition, Width, Height)
         {
@@ -133,7 +134,7 @@ namespace SolarSystemDefense
         {
             if (!Remove && Visible)
             {
-                MediumDepth.Draw(Texture, Shape, ComponentColor[(ToggleColorOnHover && MouseHover) ? 1 : 0] * Alpha);
+                MediumDepth.Draw(Texture, Shape, null, ComponentColor[(ToggleColorOnHover && MouseHover) ? 1 : 0] * Alpha);
                 if (HasContent)
                     MediumDepth.Draw(ContentTexture, ContentPosition, null, ContentColor[(ToggleColorOnHover && MouseHover) ? 1 : 0] * Alpha, 0, ContentRadius, 1f, 0, 0);
                 label?.Draw(BackgroundDepth, MediumDepth, ForegroundDepth);

@@ -44,6 +44,7 @@ namespace SolarSystemDefense
         }
 
         public event EventHandler OnClick;
+        public event EventHandler OnUpdate;
         public int ID { get; set; }
 
         protected Component(int XPosition, int YPosition, int Width, int Height)
@@ -87,11 +88,6 @@ namespace SolarSystemDefense
             return GetCoordinates(new Rectangle(0, 0, (int)Main.ScreenDimension.X, (int)Main.ScreenDimension.Y), Align, 0, 0, Margin, Width, Height);
         }
 
-        private void eventOnClick()
-        {
-            OnClick?.Invoke(this, null);
-        }
-
         public virtual void Update()
         {
             if (!Remove && Visible)
@@ -100,7 +96,9 @@ namespace SolarSystemDefense
                 MouseHover = MouseShape.Intersects(Shape);
 
                 if (MouseHover && Control.MouseClicked)
-                    eventOnClick();
+                    OnClick?.Invoke(this, null);
+
+                OnUpdate?.Invoke(this, null);
             }
         }
 

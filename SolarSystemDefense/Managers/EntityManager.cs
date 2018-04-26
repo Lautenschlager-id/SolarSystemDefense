@@ -43,18 +43,33 @@ namespace SolarSystemDefense
                 InsertEntity(e);
         }
 
-        public static bool onCollision(Entity obj1, Entity obj2)
+        static bool onCollision(Entity obj1, Entity obj2)
         {
             float radius = obj1.Radius + obj2.Radius;
             return obj1.Visible && obj2.Visible && Maths.Pythagoras(obj1.Position, obj2.Position, radius);
+        }
+
+        static void CollisionHandler()
+        {
+            foreach (Enemy e in Enemies)
+                foreach (Bullet b in Bullets)
+                    if (onCollision(e, b))
+                    {
+                        e.OnHit(b.Damage);
+                        b.Visible = false;
+                    }
         }
 
         public static void Update()
         {
             Updating = true;
 
+            CollisionHandler();
+
             foreach (Entity e in Entities)
+            {
                 e.Update();
+            }
 
             Updating = false;
 

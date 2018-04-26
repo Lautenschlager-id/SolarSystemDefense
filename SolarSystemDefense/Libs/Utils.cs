@@ -42,7 +42,7 @@ namespace SolarSystemDefense
         }
 
         // Textures
-        public static Texture2D CreateCircle(int radius, Color borderColor, Color centerColor)
+        public static Texture2D CreateCircle(int radius)
         {
             int extRadius = radius * 2 + 2;
             Texture2D texture = new Texture2D(Main.Instance.GraphicsDevice, extRadius, extRadius);
@@ -50,7 +50,7 @@ namespace SolarSystemDefense
             Color[] data = new Color[extRadius * extRadius];
 
             for (int i = 0; i < data.Length; i++)
-                data[i] = centerColor;
+                data[i] = Color.Transparent;
 
             double angleStep = 1f / radius;
 
@@ -59,15 +59,11 @@ namespace SolarSystemDefense
             {
                 x = (int)Math.Round(radius + radius * Math.Cos(angle));
                 y = (int)Math.Round(radius + radius * Math.Sin(angle));
-                data[y * extRadius + x + 1] = borderColor;
+                data[y * extRadius + x + 1] = Color.White;
             }
 
             texture.SetData(data);
             return texture;
-        }
-        public static Texture2D CreateCircle(int radius, Color borderColor)
-        {
-            return CreateCircle(radius, borderColor, Color.Transparent);
         }
 
         public class Line

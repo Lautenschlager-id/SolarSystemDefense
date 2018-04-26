@@ -35,7 +35,7 @@ namespace SolarSystemDefense
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-
+            IsMouseVisible = true;
             Window.Title = "Solar System Defense";
             Instance = this;
         }
@@ -81,17 +81,17 @@ namespace SolarSystemDefense
 
         protected override void UnloadContent(){}
 
-        protected override void Update(GameTime gameTime)
+        protected override void Update(GameTime CurrentTime)
         {
             Control.Update();
             ComponentManager.Update();
 
             CurrentStage?.Update();
 
-            base.Update(gameTime);
+            base.Update(CurrentTime);
         }
 
-        protected override void Draw(GameTime gameTime)
+        protected override void Draw(GameTime CurrentTime)
         {
             GraphicsDevice.Clear(Color.Black);
 
@@ -108,11 +108,7 @@ namespace SolarSystemDefense
             MediumDepth.End();
             ForegroundDepth.End();
 
-            ForegroundDepth.Begin();
-            ForegroundDepth.Draw(Graphic.MousePointer, Control.MouseCoordinates, Color.White);
-            ForegroundDepth.End();
-
-            base.Draw(gameTime);
+            base.Draw(CurrentTime);
         }
     }
 }

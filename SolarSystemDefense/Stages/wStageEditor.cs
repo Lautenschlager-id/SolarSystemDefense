@@ -23,6 +23,7 @@ namespace SolarSystemDefense
             ItemPanel = new cBox(Main.ViewPort.Width - 180, 0, 180, Main.ViewPort.Height) {
                 ComponentColor = Info.Colors["Container"]
             };
+            ItemPanel.Alpha = .5f;
             ComponentManager.New(ItemPanel);
 
             totalLines = new cLabel("", Font.Text, 0, 0)
@@ -54,6 +55,7 @@ namespace SolarSystemDefense
                     System.Windows.Forms.Clipboard.SetText(Encoding.UTF8.GetString(JSON, 0, JSON.Length));
                 }
             });
+            CopyStageCode.Alpha = .5f;
             ComponentManager.New(CopyStageCode);
 
             Reset = new cBox("Reset building", 0, 0, 180, 40, true)
@@ -69,6 +71,7 @@ namespace SolarSystemDefense
                 Level.Walkpoints.Clear();
                 AlignLineCounter();
             });
+            Reset.Alpha = .5f;
             ComponentManager.New(Reset);
 
             Exit = new cBox("Exit", 0, 0, 180, 40, true)
@@ -79,6 +82,7 @@ namespace SolarSystemDefense
             Exit.TextColor = Info.Colors["ButtonText"];
             pos = Exit.GetCoordinates(ItemPanel.GetDimension, "xcenter", 0, 200);
             Exit.SetPosition((int)pos.X, (int)pos.Y);
+            Exit.Alpha = .5f;
             ComponentManager.New(Exit);
 
             tutorial = new cLabel(
@@ -94,7 +98,7 @@ namespace SolarSystemDefense
                 "put the stage code in\n" +
                 "your clipboard!", Font.SmallText, 0, 0)
             {
-                ContentColor = Color.LimeGreen.Collection()
+                ContentColor = new Color(146, 91, 255).Collection()
             };
             pos = tutorial.GetCoordinates(ItemPanel.GetDimension, "xcenter bottom", 0, -50);
             tutorial.SetPosition((int)pos.X, (int)pos.Y);

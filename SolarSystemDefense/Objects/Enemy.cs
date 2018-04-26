@@ -5,9 +5,12 @@ namespace SolarSystemDefense
 {
     class Enemy : Entity
     {
-        public int EnemyType;
+        public float Speed;
+        public float Damage;
+
+        int EnemyType;
         int DamageCooldown;
-        int Life;
+        float Life;
 
         public int LastWalkpoint = 0;
 
@@ -16,18 +19,27 @@ namespace SolarSystemDefense
             this.EnemyType = EnemyType;
 
             Sprite = Graphic.Enemies[EnemyType];
+            Radius = Sprite.Width / 2f;
 
+            Speed = Data.EnemyData[EnemyType].Speed;
             Life = Data.EnemyData[EnemyType].Life;
+            Damage = Data.EnemyData[EnemyType].Damage;
 
             this.Position = Position;
             Velocity = Vector2.Zero;
             Angle = 0;
         }
 
-        public void OnHit()
+        public void OnHit(float BulletDamage)
         {
-            if (--Life <= 0)
+            Life -= BulletDamage;
+
+            if (Life <= 0)
+            {
+                wGame.Instance.AlignLabel("SCORE", "SCORE : " + (wGame.Instance.Player.Score += Data.EnemyData[EnemyType].Score));
+                wGame.Instance.AlignLabel("CASH", "CASH : $" + (wGame.Instance.Player.Cash += Data.EnemyData[EnemyType].Cash));
                 Visible = false;
+            }
             else
             {
                 DamageCooldown = 10;
@@ -45,7 +57,7 @@ namespace SolarSystemDefense
             {
                 Angle = direction.Angle();
 
-                Velocity = Maths.PolarToVector(Angle, Data.EnemyData[EnemyType].Speed);
+                Velocity = Maths.PolarToVector(Angle, Speed);
             }
         }
 
@@ -56,7 +68,6 @@ namespace SolarSystemDefense
                     ObjectColor = Color.White;
 
             Position += Velocity;
-            Position = Vector2.Clamp(Position, Size / 2, new Vector2(Main.GameBound.Width, Main.GameBound.Height) - Size / 2);
         }
     }
 }

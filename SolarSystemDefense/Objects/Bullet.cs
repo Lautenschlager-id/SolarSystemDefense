@@ -4,7 +4,7 @@ namespace SolarSystemDefense
 {
     class Bullet : Entity
     {
-        public int Damage { get; private set; }
+        public float Damage { get; private set; }
         
         public Bullet(int BulletType, Vector2 Position, Vector2 Velocity) : base()
         {

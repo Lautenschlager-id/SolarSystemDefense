@@ -6,12 +6,17 @@ namespace SolarSystemDefense
     {
         int ShooterType;
         int Timer;
+        float Speed;
+        int ShootRadius;
 
         public Shooter(int ShooterType, Vector2 Position, float Angle)
         {
             this.ShooterType = ShooterType;
 
             Sprite = Graphic.Shooters[ShooterType];
+
+            ShootRadius = Data.ShooterData[ShooterType].ShootRadius;
+            Speed = Data.ShooterData[ShooterType].Speed;
 
             Timer = Data.ShooterData[ShooterType].Cooldown;
 
@@ -23,27 +28,32 @@ namespace SolarSystemDefense
 
         public void Shoot()
         {
-            Timer = Data.ShooterData[ShooterType].defaultCooldown;
-
-            Vector2 direction = Control.MouseCoordinates - Position;
-            if (direction.LengthSquared() > 0)
+            foreach (Enemy e in EntityManager.Enemies)
             {
-                float Angle = direction.Angle();
+                if (Maths.Pythagoras(e.Position, Position, ShootRadius))
+                {
+                    Timer = Data.ShooterData[ShooterType].defaultCooldown;
 
-                Vector2 Velocity = Maths.PolarToVector(Angle, Data.ShooterData[ShooterType].Speed);
+                    Vector2 direction = e.Position - Position + e.Velocity * 2;
+                    if (direction.LengthSquared() > 0)
+                    {
+                        Angle = direction.Angle();
 
-                Quaternion EulerAim = Quaternion.CreateFromYawPitchRoll(0, 0, Angle);
-                // The vector is set as Y, X
-                Vector2 ShootDistance = Vector2.Transform(new Vector2(30, 0), EulerAim);
+                        Vector2 Velocity = Maths.PolarToVector(Angle, Speed);
 
-                EntityManager.New(new Bullet(ShooterType, Position + ShootDistance, Velocity));
+                        Quaternion EulerAim = Quaternion.CreateFromYawPitchRoll(0, 0, Angle);
+                        // The vector is set as Y, X
+                        Vector2 ShootDistance = Vector2.Transform(new Vector2(30, 0), EulerAim);
+
+                        EntityManager.New(new Bullet(ShooterType, Position + ShootDistance, Velocity));
+                    }
+                    return;
+                }
             }
         }
 
         public override void Update()
         {
-            Angle = Control.MouseCoordinates.Angle(Position);
-
             if (--Timer <= 0)
                 Shoot();
         }

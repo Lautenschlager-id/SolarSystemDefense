@@ -8,7 +8,7 @@ namespace SolarSystemDefense
     {
         public bool Visible = true;
         public Vector2 Position, Velocity;
-        public float Angle, Radius = 1;
+        public float Angle, Radius = 1, Scale = 1;
 
         protected Texture2D Sprite;
         protected Color ObjectColor = Color.White;
@@ -24,7 +24,7 @@ namespace SolarSystemDefense
         public abstract void Update();
         public virtual void Draw(SpriteBatch BackgroundDepth, SpriteBatch MediumDepth, SpriteBatch ForegroundDepth)
         {
-            BackgroundDepth.Draw(Sprite, Position, null, ObjectColor, Angle, Size / 2f, 1f, 0, 0);
+            BackgroundDepth.Draw(Sprite, Position, null, ObjectColor, Angle, Size / 2f, Scale, 0, 0);
         }
     }
 }

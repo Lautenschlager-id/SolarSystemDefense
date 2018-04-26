@@ -29,7 +29,7 @@ namespace SolarSystemDefense
                 fill[i] = Color.White;
             texture.SetData(fill);
         }
-        
+
         public static Vector2 Center(this Texture2D texture)
         {
             return new Vector2(texture.Width / 2f, texture.Height / 2f);
