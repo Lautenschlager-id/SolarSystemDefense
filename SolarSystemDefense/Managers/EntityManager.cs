@@ -15,6 +15,7 @@ namespace SolarSystemDefense
         static List<Shooter> Shooters = new List<Shooter>();
         static List<Bullet> Bullets = new List<Bullet>();
         public static List<Enemy> Enemies = new List<Enemy>();
+        public static List<Feature> Features = new List<Feature>();
 
         public static int Count
         {
@@ -33,6 +34,8 @@ namespace SolarSystemDefense
                 Shooters.Add(e as Shooter);
             else if (e is Enemy)
                 Enemies.Add(e as Enemy);
+            else if (e is Feature)
+                Features.Add(e as Feature);
         }
 
         public static void New(Entity e)
@@ -55,7 +58,7 @@ namespace SolarSystemDefense
                 foreach (Bullet b in Bullets)
                     if (onCollision(e, b))
                     {
-                        e.OnHit(b.Damage);
+                        e.OnHit(b.Damage, b.SpeedDamage);
                         b.Visible = false;
                     }
         }
@@ -81,6 +84,7 @@ namespace SolarSystemDefense
             Bullets = Bullets.Where(o => o.Visible).ToList();
             Shooters = Shooters.Where(o => o.Visible).ToList();
             Enemies = Enemies.Where(o => o.Visible).ToList();
+            Features = Features.Where(o => o.Visible).ToList();
         }
 
         public static void Draw(SpriteBatch BackgroundDepth, SpriteBatch MediumDepth, SpriteBatch ForegroundDepth)

@@ -5,10 +5,10 @@ namespace SolarSystemDefense
 {
     class Enemy : Entity
     {
-        public float Speed;
+        public float Speed, stdSpeed;
         public float Damage;
 
-        int EnemyType;
+        public int EnemyType;
         int DamageCooldown;
         float Life;
 
@@ -21,7 +21,7 @@ namespace SolarSystemDefense
             Sprite = Graphic.Enemies[EnemyType];
             Radius = Sprite.Width / 2f;
 
-            Speed = Data.EnemyData[EnemyType].Speed;
+            Speed = stdSpeed = Data.EnemyData[EnemyType].Speed * Data.Level;
             Life = Data.EnemyData[EnemyType].Life;
             Damage = Data.EnemyData[EnemyType].Damage;
 
@@ -30,7 +30,7 @@ namespace SolarSystemDefense
             Angle = 0;
         }
 
-        public void OnHit(float BulletDamage)
+        public void OnHit(float BulletDamage, float SpeedDamage)
         {
             Life -= BulletDamage;
 
@@ -42,6 +42,9 @@ namespace SolarSystemDefense
             }
             else
             {
+                Speed -= Maths.Percent(SpeedDamage, Speed);
+                Velocity = Maths.PolarToVector(Angle, Speed);
+
                 DamageCooldown = 10;
                 ObjectColor = Color.LightPink * .85f;
             }
@@ -49,8 +52,6 @@ namespace SolarSystemDefense
         
         public void SetVelocity(Vector2 nextPosition)
         {
-            float Speed = Data.EnemyData[EnemyType].Speed;
-
             Vector2 direction = nextPosition - Position;
 
             if (direction.LengthSquared() > 0)
@@ -66,6 +67,8 @@ namespace SolarSystemDefense
             if (DamageCooldown > 0)
                 if (--DamageCooldown <= 0)
                     ObjectColor = Color.White;
+
+            Speed = stdSpeed;
 
             Position += Velocity;
         }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Linq;
 
 namespace SolarSystemDefense
@@ -11,8 +12,13 @@ namespace SolarSystemDefense
         public static Texture2D[] Bullets { get; private set; }
         public static Texture2D[] Shooters { get; private set; }
         public static Texture2D[] Enemies { get; private set; }
+        public static Texture2D[] Features { get; private set; }
 
         public static Texture2D Pixel { get; private set; }
+
+        public static Texture2D Earth { get; private set; }
+        public static Texture2D Water { get; private set; }
+        public static Texture2D UFO { get; private set; }
 
         public static void LoadContent(ContentManager content)
         {
@@ -22,15 +28,23 @@ namespace SolarSystemDefense
 
             Shooters = Enumerable.Range(1, 4).Select(id => content.Load<Texture2D>("Graphic/Objects/Shooters/shooter_" + (id - 1))).ToArray();
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < Shooters.Length; i++)
                 Data.ShooterData[i].CollisionRadius.Value = Shooters[i].Width / 2f;
 
             Pixel = content.Load<Texture2D>("Graphic/pixel");
 
-            Enemies = Enumerable.Range(1, 3).Select(id => content.Load<Texture2D>("Graphic/Objects/Enemies/enemy_" + (id - 1))).ToArray();
+            Enemies = Enumerable.Range(1, 4).Select(id => content.Load<Texture2D>("Graphic/Objects/Enemies/enemy_" + (id - 1))).ToArray();
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < Enemies.Length; i++)
                 Data.EnemyData[i].CollisionRadius.Value = Enemies[i].Width / 2f;
+
+            Earth = content.Load<Texture2D>("Graphic/Objects/object_earth");
+            Water = content.Load<Texture2D>("Graphic/Objects/feature_water");
+            UFO = content.Load<Texture2D>("Graphic/Objects/object_ufo");
+
+            Features = Enumerable.Range(1, 2).Select(id => content.Load<Texture2D>("Graphic/Objects/Features/feature_" + (id - 1))).ToArray();
+            for (int i = 0; i < Features.Length; i++)
+                Data.FeatureData[i].CollisionRadius.Value = Features[i].Width / 2f;
         }
     }
 }

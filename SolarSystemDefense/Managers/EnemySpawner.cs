@@ -1,12 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using System.Collections.Generic;
 
 namespace SolarSystemDefense
 {
     static class EnemySpawner
     {
-        static float CurrentQueue = 0;
+        static int CurrentQueuePosition = 0;
+        static int[] Queue = new int[] { 0, 0, 0, 1, 0, 1, 0, 2, 0, 0, 3 };
 
         class Spawn
         {
@@ -41,17 +41,18 @@ namespace SolarSystemDefense
 
             public void RefreshTotalEnemy4Queue()
             {
-                stdTotalEnemy4Queue = stdTotalEnemy4Queue * 1.75f;
+                stdTotalEnemy4Queue += Graphic.Enemies.Length - Queue[CurrentQueuePosition];
                 TotalEnemy4Queue = stdTotalEnemy4Queue;
             }
         }
 
-        static List<Spawn> Data = new List<Spawn>();
+        static List<Spawn> SpawnData = new List<Spawn>();
         static EnemySpawner()
         {
-            Data.Add(new Spawn(0, 8));
-            Data.Add(new Spawn(1, 20));
-            Data.Add(new Spawn(2, 10));
+            SpawnData.Add(new Spawn(ID: 0, TotalEnemy4Queue: 8));
+            SpawnData.Add(new Spawn(ID: 1, TotalEnemy4Queue: 20));
+            SpawnData.Add(new Spawn(ID: 2, TotalEnemy4Queue: 10));
+            SpawnData.Add(new Spawn(ID: 3, TotalEnemy4Queue: 1));
         }
 
         static Vector2 Position;
@@ -62,10 +63,10 @@ namespace SolarSystemDefense
 
         public static void Update()
         {
-            int index = ((int)CurrentQueue % Data.Count);
+            int index = Queue[CurrentQueuePosition];
 
-            Spawn s = Data[index];
-            if (Data[index].TotalEnemy4Queue >= 0)
+            Spawn s = SpawnData[index];
+            if (SpawnData[index].TotalEnemy4Queue >= 0)
             {
                 if (--s.SpawnCooldown <= 0)
                 {
@@ -76,8 +77,12 @@ namespace SolarSystemDefense
             }
             else if (EntityManager.Enemies.Count == 0)
             {
-                Data[index].RefreshTotalEnemy4Queue();
-                CurrentQueue++;
+                SpawnData[index].RefreshTotalEnemy4Queue();
+                if (++CurrentQueuePosition >= Queue.Length)
+                {
+                    CurrentQueuePosition = 0;
+                    Data.Level++;
+                }
             }
         }
     }

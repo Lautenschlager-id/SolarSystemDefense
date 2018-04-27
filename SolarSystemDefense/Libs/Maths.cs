@@ -16,5 +16,10 @@ namespace SolarSystemDefense
         {
             return Vector2.DistanceSquared(p1, p2) < (range * range);
         }
+
+        public static float Percent(float x, float t)
+        {
+            return (x / 100) * t;
+        }
     }
 }

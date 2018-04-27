@@ -15,7 +15,7 @@ namespace SolarSystemDefense
 
             Sprite = Graphic.Shooters[ShooterType];
 
-            ShootRadius = Data.ShooterData[ShooterType].ShootRadius;
+            ShootRadius = Data.ShooterData[ShooterType].ActionArea;
             Speed = Data.ShooterData[ShooterType].Speed;
 
             Timer = Data.ShooterData[ShooterType].Cooldown;
@@ -29,7 +29,6 @@ namespace SolarSystemDefense
         public void Shoot()
         {
             foreach (Enemy e in EntityManager.Enemies)
-            {
                 if (Maths.Pythagoras(e.Position, Position, ShootRadius))
                 {
                     Timer = Data.ShooterData[ShooterType].defaultCooldown;
@@ -49,7 +48,6 @@ namespace SolarSystemDefense
                     }
                     return;
                 }
-            }
         }
 
         public override void Update()

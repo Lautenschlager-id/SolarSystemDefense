@@ -124,5 +124,11 @@ namespace SolarSystemDefense
                 Depth.Draw(pixel, rect, null, color * alpha, angle, Vector2.Zero, SpriteEffects.None, 0);
             }
         }
+
+        // Functions
+        public static float ScaleBounce(float TimeSrc, int scale = 5)
+        {
+            return 1 + (float)Math.Sin(scale * TimeSrc) * .1f;
+        }
     }
 }
