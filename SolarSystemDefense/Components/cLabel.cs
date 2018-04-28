@@ -91,7 +91,7 @@ namespace SolarSystemDefense
         public override void Draw(SpriteBatch BackgroundDepth, SpriteBatch MediumDepth, SpriteBatch ForegroundDepth)
         {
             if (Visible)
-                ForegroundDepth.DrawString(TextFont, Text, GetPosition, ContentColor[(MouseHover ? 1 : 0)] * Alpha);
+                MediumDepth.DrawString(TextFont, Text, GetPosition, ContentColor[(MouseHover ? 1 : 0)] * Alpha);
         }
     }
 }

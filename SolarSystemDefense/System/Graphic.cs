@@ -20,6 +20,10 @@ namespace SolarSystemDefense
         public static Texture2D Water { get; private set; }
         public static Texture2D UFO { get; private set; }
 
+        public static Texture2D InfoPower { get; private set; }
+        public static Texture2D InfoTimer { get; private set; }
+        public static Texture2D InfoSpeed { get; private set; }
+
         public static void LoadContent(ContentManager content)
         {
             Background = content.Load<Texture2D>("Graphic/background");
@@ -45,6 +49,10 @@ namespace SolarSystemDefense
             Features = Enumerable.Range(1, 2).Select(id => content.Load<Texture2D>("Graphic/Objects/Features/feature_" + (id - 1))).ToArray();
             for (int i = 0; i < Features.Length; i++)
                 Data.FeatureData[i].CollisionRadius.Value = Features[i].Width / 2f;
+
+            InfoPower = content.Load<Texture2D>("Graphic/UI/popup_power");
+            InfoTimer = content.Load<Texture2D>("Graphic/UI/popup_timer");
+            InfoSpeed = content.Load<Texture2D>("Graphic/UI/popup_speed");
         }
     }
 }

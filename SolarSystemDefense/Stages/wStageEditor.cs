@@ -21,9 +21,9 @@ namespace SolarSystemDefense
             Main.Resize(900, 600);
 
             ItemPanel = new cBox(Main.ViewPort.Width - 180, 0, 180, Main.ViewPort.Height) {
-                ComponentColor = Info.Colors["Container"]
+                ComponentColor = Info.Colors["Container"],
+                Alpha = .5f
             };
-            ItemPanel.Alpha = .5f;
             ComponentManager.New(ItemPanel);
 
             totalLines = new cLabel("", Font.Text, 0, 0)
@@ -33,12 +33,13 @@ namespace SolarSystemDefense
             AlignLineCounter();
             ComponentManager.New(totalLines);
             
-            CopyStageCode = new cBox("Copy stage code", 0, 0, 180, 40, true)
+            CopyStageCode = new cBox("Copy stage code", Font.Text, 0, 0, 180, 40, true)
             {
                 Visible = false,
-                ComponentColor = Info.Colors["Button"]
+                ComponentColor = Info.Colors["Button"],
+                TextColor = Info.Colors["ButtonText"],
+                Alpha = .5f
             };
-            CopyStageCode.TextColor = Info.Colors["ButtonText"];
             Vector2 pos = CopyStageCode.GetCoordinates(ItemPanel.GetDimension, "xcenter", 0, 100);
             CopyStageCode.SetPosition((int)pos.X, (int)pos.Y);
             CopyStageCode.OnClick += new EventHandler((obj, arg) => {
@@ -55,15 +56,15 @@ namespace SolarSystemDefense
                     System.Windows.Forms.Clipboard.SetText(Encoding.UTF8.GetString(JSON, 0, JSON.Length));
                 }
             });
-            CopyStageCode.Alpha = .5f;
             ComponentManager.New(CopyStageCode);
 
-            Reset = new cBox("Reset building", 0, 0, 180, 40, true)
+            Reset = new cBox("Reset building", Font.Text, 0, 0, 180, 40, true)
             {
                 Visible = false,
-                ComponentColor = Info.Colors["Button"]
+                ComponentColor = Info.Colors["Button"],
+                TextColor = Info.Colors["ButtonText"],
+                Alpha = .5f
             };
-            Reset.TextColor = Info.Colors["ButtonText"];
             pos = Reset.GetCoordinates(ItemPanel.GetDimension, "xcenter", 0, 150);
             Reset.SetPosition((int)pos.X, (int)pos.Y);
             Reset.OnClick += new EventHandler((obj, arg) =>
@@ -71,18 +72,17 @@ namespace SolarSystemDefense
                 Level.Walkpoints.Clear();
                 AlignLineCounter();
             });
-            Reset.Alpha = .5f;
             ComponentManager.New(Reset);
 
-            Exit = new cBox("Exit", 0, 0, 180, 40, true)
+            Exit = new cBox("Exit", Font.Text, 0, 0, 180, 40, true)
             {
                 Visible = false,
-                ComponentColor = Info.Colors["Button"]
+                ComponentColor = Info.Colors["Button"],
+                TextColor = Info.Colors["ButtonText"],
+                Alpha = .5f
             };
-            Exit.TextColor = Info.Colors["ButtonText"];
             pos = Exit.GetCoordinates(ItemPanel.GetDimension, "xcenter", 0, 200);
             Exit.SetPosition((int)pos.X, (int)pos.Y);
-            Exit.Alpha = .5f;
             ComponentManager.New(Exit);
 
             tutorial = new cLabel(

@@ -54,7 +54,9 @@ namespace SolarSystemDefense
 
         List<cBox> AvailableObjects = new List<cBox>();
 
-        cBox ObjectsPanel;
+        cBox ObjectsPanel, InfoPopUp;
+        List<Component> PopUpComponents = new List<Component>();
+
         cLabel Title, PlayerLife, PlayerCash, PlayerScore;
         cLabel item_price; // visibility
         public wGame()
@@ -74,7 +76,6 @@ namespace SolarSystemDefense
             };
             ObjectsPanel.OnClick += new EventHandler((obj, arg) =>
             {
-                WatchObject = null;
                 if (SelectedObject.buildID >= 0)
                     SelectedObject.buildID = -1;
             });
@@ -121,10 +122,10 @@ namespace SolarSystemDefense
             {
                 item_square = new cBox(Graphic.Shooters[i], (int)ObjectsPanel.GetPosition.X + 30 + (i % 2) * 70, (int)Title.GetPosition.Y + 30 + (i / 2) * 90, 50, 50)
                 {
-                    ComponentColor = Color.Transparent.Collection(),
                     ID = i
                 };
                 item_square.OnClick += eventSelectedObject;
+                item_square.OnHover += eventHoveredObject;
 
                 AvailableObjects.Add(item_square);
 
@@ -159,10 +160,10 @@ namespace SolarSystemDefense
             {
                 item_square = new cBox(Graphic.Features[i], (int)ObjectsPanel.GetPosition.X + 30 + (i % 2) * 70, (int)Title.GetPosition.Y + 50 + (i / 2) * 90, 50, 50)
                 {
-                    ComponentColor = Color.Transparent.Collection(),
                     ID = 100 + i
                 };
                 item_square.OnClick += eventSelectedObject;
+                item_square.OnHover += eventHoveredObject;
 
                 AvailableObjects.Add(item_square);
 
@@ -223,6 +224,10 @@ namespace SolarSystemDefense
                 SelectedObject.allowBuild = true;
             }
         }
+        public void eventHoveredObject(object obj, EventArgs arg)
+        {
+            CreateInfoPopUp(obj as cBox);
+        }
 
         private void AlignLabel(cLabel label, string Text)
         {
@@ -254,8 +259,147 @@ namespace SolarSystemDefense
             item_price.ContentColor = ((Player.Cash >= price) ? Color.LimeGreen : Color.Red).Collection();
         }
 
+        private void Sell(object obj, EventArgs arg)
+        {
+            Entity e = ((Entity)WatchObject[2]);
+
+            int ID = e.Type;
+            bool isShooter = (obj as cBox).ID == 1;
+
+            e.Visible = false;
+
+            int price;
+            if (isShooter)
+                price = Data.ShooterData[ID].Price;
+            else
+                price = Data.FeatureData[ID].Price;
+
+            price = (int)Maths.Percent(60, price);
+
+            AlignLabel("CASH", "CASH : $" + (Player.Cash += price));
+        }
+
+        private void CreateInfoPopUp(cBox obj)
+        {
+            Vector2 Position = Control.MouseCoordinates;
+            Vector2 Size = ObjectsPanel.GetPosition + ObjectsPanel.GetSize;
+            Position = Vector2.Clamp(new Vector2(Position.X - 100 / 2f, Position.Y - 110), ObjectsPanel.GetPosition, new Vector2(Size.X - 100, Size.Y - 110));
+
+            InfoPopUp = new cBox("INFO", Font.PopUpTitle, (int)Position.X, (int)Position.Y, 100, 110, false)
+            {
+                ComponentColor = Info.Colors["InfoBox"],
+                TextColor = Color.GreenYellow.Collection(),
+                Alpha = .7f
+            };
+            InfoPopUp.SetLabelPosition("xcenter top");
+            Vector2 NewSize = InfoPopUp.GetSize;
+
+            Component component;
+
+            string Damage = "", Speed = "", Cooldown = "";
+
+            int ID = obj.ID;
+            if (ID < 100)
+            {
+                Data.ShooterInfo ObjData = Data.ShooterData[obj.ID];
+
+                if (ObjData.Damage > 0)
+                    Damage = ObjData.Damage.ToString();
+                if (ObjData.SpeedDamage > 0)
+                    Damage = (Damage == "" ? "" : Damage + " / ") + "-" + ObjData.SpeedDamage.ToString() + "%";
+                if (ObjData.Speed > 0)
+                    Speed = ObjData.Speed.ToString();
+                if (ObjData.Damage > 0)
+                    Cooldown = ObjData.Cooldown.ToString();
+            }
+            else
+            {
+                ID -= 100;
+                Data.FeatureInfo ObjData = Data.FeatureData[obj.ID - 100];
+
+                if (ObjData.SpeedDamage > 0)
+                    Damage = "-" + ObjData.SpeedDamage.ToString() + "%";
+                if (ObjData.Speed > 0)
+                    Speed = ObjData.Speed.ToString();
+                if (ObjData.defaultCooldown > 0)
+                    Cooldown = ObjData.defaultCooldown.ToString();
+            }
+
+            // Images
+            Position = InfoPopUp.GetCoordinates(InfoPopUp.GetDimension, "left top", 0, 20, 0);
+
+            if (Damage != "")
+            {
+                component = new cBox(Graphic.InfoPower, 0, 0, 20, 20);
+                component.SetPosition((int)Position.X, (int)Position.Y);
+                PopUpComponents.Add(component as Component);
+            }
+            else
+                NewSize.Y -= 30;
+
+            if (Speed != "")
+            {
+                Position = new Vector2(Position.X, Position.Y + 30);
+                component = new cBox(Graphic.InfoSpeed, 0, 0, 20, 20);
+                component.SetPosition((int)Position.X, (int)Position.Y);
+                PopUpComponents.Add(component as Component);
+            }
+            else
+                NewSize.Y -= 30;
+
+            if (Cooldown != "")
+            {
+                Position = new Vector2(Position.X, Position.Y + 30);
+                component = new cBox(Graphic.InfoTimer, 0, 0, 20, 20);
+                component.SetPosition((int)Position.X, (int)Position.Y);
+                PopUpComponents.Add(component as Component);
+            }
+            else
+                NewSize.Y -= 30;
+
+            // Labels
+            Position = InfoPopUp.GetCoordinates(InfoPopUp.GetDimension, "left top", 28, 25);
+
+            if (Damage != "")
+            {
+                component = new cLabel(Damage, Font.MenuText, (int)Position.X, (int)Position.Y)
+                {
+                    ContentColor = Color.Yellow.Collection()
+                };
+                PopUpComponents.Add(component as Component);
+            }
+
+            if (Speed != "")
+            {
+                Position = new Vector2(Position.X, Position.Y + 28);
+                component = new cLabel(Speed, Font.MenuText, (int)Position.X, (int)Position.Y)
+                {
+                    ContentColor = Color.Yellow.Collection()
+                };
+                PopUpComponents.Add(component as Component);
+            }
+
+            if (Cooldown != "")
+            {
+                Position = new Vector2(Position.X, Position.Y + 28);
+                component = new cLabel(Cooldown, Font.MenuText, (int)Position.X, (int)Position.Y)
+                {
+                    ContentColor = Color.Yellow.Collection()
+                };
+                PopUpComponents.Add(component as Component);
+            }
+
+            InfoPopUp.SetSize = NewSize;
+        }
+
         public override void Update()
         {
+            if (InfoPopUp != null)
+            {
+                InfoPopUp = null;
+                PopUpComponents.Clear();
+            }
+
             if (CurrentStage != RoundStage.Paused)
             {
                 // Place new shooter
@@ -302,6 +446,8 @@ namespace SolarSystemDefense
                 c.Update();
 
             // Gets the WatchObject
+            if (WatchObject != null)
+                ((cBox)WatchObject[0]).Update();
             bool updated = false;
             if (!(updated = !Control.MouseClicked) && SelectedObject.buildID < 0)
             {
@@ -317,17 +463,36 @@ namespace SolarSystemDefense
 
                     if (Maths.Pythagoras(Control.MouseCoordinates, e.Position, CollisionRadius))
                     {
-                        int ActionArea = 0;
+                        int ActionArea = 0, isShooter = 1;
                         if (e is Shooter)
                             ActionArea = (e as Shooter).ActionArea;
                         else if (e is Feature)
+                        {
+                            isShooter = 0;
                             ActionArea = (e as Feature).ActionArea;
+                        }
+
+                        int Type = (e as Entity).Type;
 
                         updated = true;
+                        
+                        string Text = "SELL ($60%)";
+                        Vector2 Size = Font.MenuText.MeasureString(Text) + Font.Margin * 2 * Vector2.One;
+                        Vector2 Position = Vector2.Clamp(e.Position - Size / 2f, Vector2.Zero, new Vector2(Main.GameBound.Width - Size.X, Main.GameBound.Height - Size.Y));
+                        cBox SellButton = new cBox(Text, Font.MenuText, (int)Position.X, (int)Position.Y + (Position.Y > 100 ? -30 : 30), (int)Size.X, (int)Size.Y, true)
+                        {
+                            ID = isShooter,
+                            ComponentColor = Info.Colors["Button"],
+                            TextColor = Info.Colors["ButtonText"],
+                            Alpha = .5f
+                        };
+                        SellButton.OnClick += Sell;
+
                         WatchObject = new object[]
                         {
+                            SellButton,
                             Utils.CreateCircle(ActionArea),
-                            e.Position
+                            e
                         };
                         break;
                     }
@@ -383,8 +548,14 @@ namespace SolarSystemDefense
 
             if (WatchObject != null)
             {
-                ForegroundDepth.Draw((Texture2D)WatchObject[0], (Vector2)WatchObject[1], null, Color.LightBlue, 0, ((Texture2D)WatchObject[0]).Center(), 1f, SpriteEffects.None, 0f);
-
+                ForegroundDepth.Draw((Texture2D)WatchObject[1], ((Entity)WatchObject[2]).Position, null, Color.LightBlue, 0, ((Texture2D)WatchObject[1]).Center(), 1f, SpriteEffects.None, 0f);
+                ((cBox)WatchObject[0]).Draw(BackgroundDepth, MediumDepth, ForegroundDepth);
+            }
+            if (InfoPopUp != null)
+            {
+                InfoPopUp.Draw(BackgroundDepth, MediumDepth, ForegroundDepth);
+                foreach (Component d in PopUpComponents)
+                    d.Draw(BackgroundDepth, MediumDepth, ForegroundDepth);
             }
         }
     }

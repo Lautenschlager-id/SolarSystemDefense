@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 
 namespace SolarSystemDefense
 {
@@ -8,19 +7,9 @@ namespace SolarSystemDefense
     {
         bool HasContent = false, HasLabel = false;
         bool ToggleColorOnHover;
-
-        Texture2D ContentTexture;
-
         cLabel label;
-        SpriteFont LabelFont;
 
-        public Texture2D GetContent
-        {
-            get
-            {
-                return ContentTexture;
-            }
-        }
+        public Texture2D GetContent { get; private set; }
         public Vector2 ContentRadius { get; private set; }
         public Vector2 ContentPosition { get; private set; }
         public string SourceText
@@ -39,7 +28,7 @@ namespace SolarSystemDefense
         {
             get
             {
-                return LabelFont;
+                return label.SourceFont;
             }
             set
             {
@@ -70,16 +59,17 @@ namespace SolarSystemDefense
         {
             HasContent = true;
             this.ToggleColorOnHover = ToggleColorOnHover;
+            ComponentColor = Color.Transparent.Collection();
 
             SetContent(Texture);
             SetPosition(XPosition, YPosition);
         }
-        public cBox(string Text, int XPosition, int YPosition, int Width = 50, int Height = 50, bool ToggleColorOnHover = false)
+        public cBox(string Text, SpriteFont LabelFont, int XPosition, int YPosition, int Width = 50, int Height = 50, bool ToggleColorOnHover = false)
             : base(XPosition, YPosition, Width, Height)
         {
             HasLabel = true;
 
-            label = new cLabel(Text, GetDimension, LabelFont = Font.Text);
+            label = new cLabel(Text, GetDimension, LabelFont);
 
             this.ToggleColorOnHover = ToggleColorOnHover;
 
@@ -90,7 +80,7 @@ namespace SolarSystemDefense
         {
             if (HasContent)
             {
-                ContentTexture = NewContent;
+                GetContent = NewContent;
                 ContentRadius = new Vector2(NewContent.Width, NewContent.Height) / 2f;
             }
         }
@@ -114,11 +104,11 @@ namespace SolarSystemDefense
         {
             return base.GetCoordinates(Align, XAxis, YAxis, Margin, Shape.Width, Shape.Height);
         }
-        public void SetLabelPosition(Rectangle Dimension, string Align, int XAxis = 0, int YAxis = 0, int Margin = 5)
+        public void SetLabelPosition(string Align, int XAxis = 0, int YAxis = 0, int Margin = 5)
         {
             if (label != null)
             {
-                Vector2 offset = label.GetCoordinates(Dimension, Align, XAxis, YAxis, Margin);
+                Vector2 offset = label.GetCoordinates(Shape, Align, XAxis, YAxis, Margin);
                 label.SetPosition((int)offset.X, (int)offset.Y);
             }
         }
@@ -136,7 +126,7 @@ namespace SolarSystemDefense
             {
                 MediumDepth.Draw(Texture, Shape, null, ComponentColor[(ToggleColorOnHover && MouseHover) ? 1 : 0] * Alpha);
                 if (HasContent)
-                    MediumDepth.Draw(ContentTexture, ContentPosition, null, ContentColor[(ToggleColorOnHover && MouseHover) ? 1 : 0] * Alpha, 0, ContentRadius, 1f, 0, 0);
+                    MediumDepth.Draw(GetContent, ContentPosition, null, ContentColor[(ToggleColorOnHover && MouseHover) ? 1 : 0] * Alpha, 0, ContentRadius, 1f, 0, 0);
                 label?.Draw(BackgroundDepth, MediumDepth, ForegroundDepth);
             }
         }

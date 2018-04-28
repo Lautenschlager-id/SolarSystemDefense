@@ -42,9 +42,18 @@ namespace SolarSystemDefense
                 return new Vector2(Shape.Width, Shape.Height);
             }
         }
+        public Vector2 SetSize
+        {
+            set
+            {
+                Shape.Width = (int)value.X;
+                Shape.Height = (int)value.Y;
+            }
+        }
 
         public event EventHandler OnClick;
         public event EventHandler OnUpdate;
+        public event EventHandler OnHover;
         public int ID { get; set; }
 
         protected Component(int XPosition, int YPosition, int Width, int Height)
@@ -95,8 +104,12 @@ namespace SolarSystemDefense
                 MouseShape = new Rectangle((int)Control.MouseCoordinates.X, (int)Control.MouseCoordinates.Y, 1, 1);
                 MouseHover = MouseShape.Intersects(Shape);
 
-                if (MouseHover && Control.MouseClicked)
-                    OnClick?.Invoke(this, null);
+                if (MouseHover)
+                {
+                    OnHover?.Invoke(this, null);
+                    if (Control.MouseClicked)
+                        OnClick?.Invoke(this, null);
+                }
 
                 OnUpdate?.Invoke(this, null);
             }

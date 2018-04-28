@@ -87,9 +87,7 @@ namespace SolarSystemDefense
             CollisionHandler();
 
             foreach (Entity e in Entities)
-            {
                 e.Update();
-            }
 
             Updating = false;
 

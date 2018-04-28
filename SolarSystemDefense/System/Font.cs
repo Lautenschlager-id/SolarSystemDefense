@@ -12,6 +12,7 @@ namespace SolarSystemDefense
         public static SpriteFont Title { get; private set; }
         public static SpriteFont MenuTitle { get; private set; }
         public static SpriteFont MenuText { get; private set; }
+        public static SpriteFont PopUpTitle { get; private set; }
 
         public static void LoadContent(ContentManager content)
         {
@@ -20,6 +21,7 @@ namespace SolarSystemDefense
             Title = content.Load<SpriteFont>("Font/Title");
             MenuTitle = content.Load<SpriteFont>("Font/MenuTitle");
             MenuText = content.Load<SpriteFont>("Font/MenuText");
+            PopUpTitle = content.Load<SpriteFont>("Font/PopUpTitle");
         }
     }
 }
