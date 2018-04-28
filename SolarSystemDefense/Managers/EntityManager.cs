@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace SolarSystemDefense
     {
         static bool Updating;
 
-        static List<Entity> Entities = new List<Entity>();
+        public static List<Entity> Entities = new List<Entity>();
         static List<Entity> NewEntities = new List<Entity>();
 
         static List<Shooter> Shooters = new List<Shooter>();
@@ -52,14 +53,30 @@ namespace SolarSystemDefense
             return obj1.Visible && obj2.Visible && Maths.Pythagoras(obj1.Position, obj2.Position, radius);
         }
 
+        static void Push(Entity e1, Entity e2)
+        {
+            Vector2 d = e2.Position - e1.Position;
+            e1.Velocity += 5 * d / (d.LengthSquared() + 1);
+        }
+
         static void CollisionHandler()
         {
+            // Enemies x Bullet
             foreach (Enemy e in Enemies)
                 foreach (Bullet b in Bullets)
                     if (onCollision(e, b))
                     {
                         e.OnHit(b.Damage, b.SpeedDamage);
                         b.Visible = false;
+                    }
+
+            // Bullet x Bullet
+            for (int i = 0; i < Bullets.Count; i++)
+                for (int j = i + 1; j < Bullets.Count; j++)
+                    if (onCollision(Bullets[i], Bullets[j]))
+                    {
+                        Push(Bullets[i], Bullets[j]);
+                        Push(Bullets[j], Bullets[i]);
                     }
         }
 

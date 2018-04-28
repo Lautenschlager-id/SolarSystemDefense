@@ -81,7 +81,7 @@ namespace SolarSystemDefense
                 if (++CurrentQueuePosition >= Queue.Length)
                 {
                     CurrentQueuePosition = 0;
-                    Data.Level++;
+                    Data.Level += .4f;
                 }
             }
         }

@@ -6,12 +6,11 @@ namespace SolarSystemDefense
 {
     class Feature : Entity
     {
-        public int FeatureType;
-
         int Timer;
         float Speed;
         float TimeSinceSpawn = 0;
-        int ActionArea;
+
+        public int ActionArea;
 
         static List<EventHandler> eventUpdate4Each = new List<EventHandler>();
         static Feature()
@@ -27,7 +26,7 @@ namespace SolarSystemDefense
                     foreach (Enemy e in EntityManager.Enemies)
                         if (e.LastWalkpoint >= index)
                         {
-                            f.Timer = Data.FeatureData[f.FeatureType].defaultCooldown;
+                            f.Timer = Data.FeatureData[f.Type].defaultCooldown;
 
                             Vector2 direction = wGame.Instance.StageMap.Walkpoints[index - 1] - wGame.Instance.StageMap.Walkpoints[index];
 
@@ -54,25 +53,25 @@ namespace SolarSystemDefense
                 foreach (Enemy e in EntityManager.Enemies)
                 {
                     if (Maths.Pythagoras(e.Position, f.Position, f.ActionArea))
-                        e.Speed -= Maths.Percent(Data.FeatureData[f.FeatureType].SpeedDamage, e.Speed);
+                        e.Speed -= Maths.Percent(Data.FeatureData[f.Type].SpeedDamage, e.Speed);
                     e.Velocity = Maths.PolarToVector(e.Angle, e.Speed);
                 }
             }));
         }
 
-        public Feature(int FeatureType, Vector2 Position, float Angle)
+        public Feature(int Type, Vector2 Position, float Angle)
         {
-            this.FeatureType = FeatureType;
+            this.Type = Type;
 
-            Sprite = Graphic.Features[FeatureType];
+            Sprite = Graphic.Features[Type];
 
-            if (Data.FeatureData[FeatureType].Cooldown > 0)
+            if (Data.FeatureData[Type].Cooldown > 0)
             {
-                Timer = Data.FeatureData[FeatureType].Cooldown;
-                Speed = Data.FeatureData[FeatureType].Speed;
+                Timer = Data.FeatureData[Type].Cooldown;
+                Speed = Data.FeatureData[Type].Speed;
             }
-            if (Data.FeatureData[FeatureType].ActionArea > 0)
-                ActionArea = Data.FeatureData[FeatureType].ActionArea;
+            if (Data.FeatureData[Type].ActionArea > 0)
+                ActionArea = Data.FeatureData[Type].ActionArea;
 
             this.Position = Position;
             Velocity = Vector2.Zero;
@@ -82,7 +81,7 @@ namespace SolarSystemDefense
 
         public override void Update()
         {
-            eventUpdate4Each[FeatureType]?.Invoke(this, null);
+            eventUpdate4Each[Type]?.Invoke(this, null);
         }
     }
 }

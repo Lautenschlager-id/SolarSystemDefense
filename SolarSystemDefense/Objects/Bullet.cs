@@ -10,13 +10,13 @@ namespace SolarSystemDefense
 
         bool CanRotate = true;
 
-        public Bullet(int BulletType, Vector2 Position, Vector2 Velocity)
+        public Bullet(int Type, Vector2 Position, Vector2 Velocity)
         {
-            Sprite = Graphic.Bullets[BulletType];
+            Sprite = Graphic.Bullets[this.Type = Type];
             Radius = Sprite.Width / 2f;
 
-            Damage = Data.ShooterData[BulletType].Damage;
-            SpeedDamage = Data.ShooterData[BulletType].SpeedDamage;
+            Damage = Data.ShooterData[Type].Damage;
+            SpeedDamage = Data.ShooterData[Type].SpeedDamage;
 
             this.Position = Position;
             this.Velocity = Velocity;

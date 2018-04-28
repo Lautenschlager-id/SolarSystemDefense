@@ -4,21 +4,21 @@ namespace SolarSystemDefense
 {
     class Shooter : Entity
     {
-        int ShooterType;
         int Timer;
         float Speed;
-        int ShootRadius;
 
-        public Shooter(int ShooterType, Vector2 Position, float Angle)
+        public int ActionArea;
+
+        public Shooter(int Type, Vector2 Position, float Angle)
         {
-            this.ShooterType = ShooterType;
+            this.Type = Type;
 
-            Sprite = Graphic.Shooters[ShooterType];
+            Sprite = Graphic.Shooters[Type];
 
-            ShootRadius = Data.ShooterData[ShooterType].ActionArea;
-            Speed = Data.ShooterData[ShooterType].Speed;
+            ActionArea = Data.ShooterData[Type].ActionArea;
+            Speed = Data.ShooterData[Type].Speed;
 
-            Timer = Data.ShooterData[ShooterType].Cooldown;
+            Timer = Data.ShooterData[Type].Cooldown;
 
             this.Position = Position;
             Velocity = Vector2.Zero;
@@ -29,11 +29,11 @@ namespace SolarSystemDefense
         public void Shoot()
         {
             foreach (Enemy e in EntityManager.Enemies)
-                if (Maths.Pythagoras(e.Position, Position, ShootRadius))
+                if (Maths.Pythagoras(e.Position, Position, ActionArea))
                 {
-                    Timer = Data.ShooterData[ShooterType].defaultCooldown;
+                    Timer = Data.ShooterData[Type].defaultCooldown;
 
-                    Vector2 direction = e.Position - Position + e.Velocity * 2;
+                    Vector2 direction = e.Position - Position;
                     if (direction.LengthSquared() > 0)
                     {
                         Angle = direction.Angle();
@@ -44,7 +44,7 @@ namespace SolarSystemDefense
                         // The vector is set as Y, X
                         Vector2 ShootDistance = Vector2.Transform(new Vector2(30, 0), EulerAim);
 
-                        EntityManager.New(new Bullet(ShooterType, Position + ShootDistance, Velocity));
+                        EntityManager.New(new Bullet(Type, Position + ShootDistance, Velocity));
                     }
                     return;
                 }

@@ -29,8 +29,6 @@ namespace SolarSystemDefense
 
         public Info.StageTable StageMap = new Info.StageTable();
 
-        List<List<int>> ActiveObjectDatas = new List<List<int>>();
-
         /* ID
          Shooter = 0 - 99
          Feature = 100 +
@@ -188,6 +186,19 @@ namespace SolarSystemDefense
             }
         }
 
+        private void LoadStage()
+        {
+
+            string LoadedStage = Data.OfficialStages[Maths.Random.Next(0, Data.OfficialStages.Count - 1)];
+
+            MemoryStream memory = new MemoryStream(Encoding.UTF8.GetBytes(LoadedStage));
+
+            DataContractJsonSerializer serializer = new DataContractJsonSerializer(StageMap.GetType());
+            StageMap = serializer.ReadObject(memory) as Info.StageTable;
+
+            memory.Close();
+        }
+
         private void eventSelectedObject(object obj, EventArgs arg)
         {
             int id = (obj as cBox).ID;
@@ -196,7 +207,7 @@ namespace SolarSystemDefense
 
             if (!isShooter)
                 foreach (Feature f in EntityManager.Features)
-                    if (f.FeatureType == id - 100)
+                    if (f.Type == id - 100)
                         return;
 
             int Price = isShooter ? Data.ShooterData[id].Price : Data.FeatureData[id - 100].Price;
@@ -243,22 +254,11 @@ namespace SolarSystemDefense
             item_price.ContentColor = ((Player.Cash >= price) ? Color.LimeGreen : Color.Red).Collection();
         }
 
-        private void LoadStage()
-        {
-            string LoadedStage = "{\"Walkpoints\":[{\"X\":263,\"Y\":114},{\"X\":347,\"Y\":226},{\"X\":353,\"Y\":382},{\"X\":538,\"Y\":362},{\"X\":468,\"Y\":124},{\"X\":596,\"Y\":167},{\"X\":682,\"Y\":417},{\"X\":276,\"Y\":597},{\"X\":58,\"Y\":435},{\"X\":143,\"Y\":183},{\"X\":196,\"Y\":217},{\"X\":233,\"Y\":342},{\"X\":239,\"Y\":138},{\"X\":109,\"Y\":37},{\"X\":416,\"Y\":53},{\"X\":415,\"Y\":186}]}";
-
-            MemoryStream memory = new MemoryStream(Encoding.UTF8.GetBytes(LoadedStage));
-
-            DataContractJsonSerializer serializer = new DataContractJsonSerializer(StageMap.GetType());
-            StageMap = serializer.ReadObject(memory) as Info.StageTable;
-
-            memory.Close();
-        }
-
         public override void Update()
         {
             if (CurrentStage != RoundStage.Paused)
             {
+                // Place new shooter
                 if (SelectedObject.buildID >= 0)
                 {
                     SelectedObject.angle += (float)Control.MouseWheel / 5;
@@ -273,12 +273,11 @@ namespace SolarSystemDefense
                         else
                             EntityManager.New(new Feature(SelectedObject.buildID, Position, SelectedObject.angle));
 
-                        ActiveObjectDatas.Add(new List<int>() { SelectedObject.buildID, (int)Position.X, (int)Position.Y, SelectedObject.isShooter ? 1 : 0 });
-
                         SelectedObject.buildID = -1;
                     }
                 }
 
+                // Update enemy position
                 foreach (Enemy e in EntityManager.Enemies.GetRange(0, EntityManager.Enemies.Count))
                     if (Math.Floor(Vector2.Distance(e.Position, StageMap.Walkpoints[e.LastWalkpoint])) <= e.Speed * 2)
                     {
@@ -302,40 +301,61 @@ namespace SolarSystemDefense
             foreach (cBox c in AvailableObjects)
                 c.Update();
 
+            // Gets the WatchObject
             bool updated = false;
-            if (!(updated = !Control.MouseClicked))
-                foreach (List<int> o in ActiveObjectDatas)
+            if (!(updated = !Control.MouseClicked) && SelectedObject.buildID < 0)
+            {
+                foreach (Entity e in EntityManager.Entities)
                 {
-                    Vector2 pos = new Vector2(o[1], o[2]);
+                    float CollisionRadius;
+                    if (e is Shooter)
+                        CollisionRadius = Data.ShooterData[e.Type].CollisionRadius;
+                    else if (e is Feature)
+                        CollisionRadius = Data.FeatureData[e.Type].CollisionRadius;
+                    else
+                        continue;
 
-                    if (Maths.Pythagoras(Control.MouseCoordinates, pos, (o[3] == 1 ? Data.ShooterData[o[0]].CollisionRadius : Data.FeatureData[o[0]].CollisionRadius)))
+                    if (Maths.Pythagoras(Control.MouseCoordinates, e.Position, CollisionRadius))
                     {
-                        int size = (o[3] == 1 ? Data.ShooterData[o[0]].ActionArea : Data.FeatureData[o[0]].ActionArea);
+                        int ActionArea = 0;
+                        if (e is Shooter)
+                            ActionArea = (e as Shooter).ActionArea;
+                        else if (e is Feature)
+                            ActionArea = (e as Feature).ActionArea;
 
-                        if (size > 0)
+                        updated = true;
+                        WatchObject = new object[]
                         {
-                            updated = true;
-                            WatchObject = new object[] {
-                                    Utils.CreateCircle(size),
-                                    pos
-                                };
-                        }
-
+                            Utils.CreateCircle(ActionArea),
+                            e.Position
+                        };
                         break;
                     }
                 }
+            }
             if (!updated)
                 WatchObject = null;
 
+            // Allows to build a new object
             if (SelectedObject.buildID >= 0)
             {
                 Rectangle Bounds = Main.GameBound;
                 float Radius = Data.ShooterData[SelectedObject.buildID].CollisionRadius;
                 Bounds.Inflate(-(int)Radius, -(int)Radius);
                 if (SelectedObject.allowBuild = Bounds.Contains(Control.MouseCoordinates.ToPoint()))
-                    foreach (List<int> s in ActiveObjectDatas)
-                        if (!(SelectedObject.allowBuild = !Maths.Pythagoras(Control.MouseCoordinates, new Vector2(s[1], s[2]), (s[3] == 1 ? Data.ShooterData[s[0]].CollisionRadius : Data.FeatureData[s[0]].CollisionRadius) + Radius)))
+                    foreach (Entity e in EntityManager.Entities)
+                    {
+                        float CollisionRadius;
+                        if (e is Shooter)
+                            CollisionRadius = Data.ShooterData[e.Type].CollisionRadius;
+                        else if (e is Feature)
+                            CollisionRadius = Data.FeatureData[e.Type].CollisionRadius;
+                        else
+                            continue;
+
+                        if (!(SelectedObject.allowBuild = !Maths.Pythagoras(Control.MouseCoordinates, e.Position, CollisionRadius + Radius)))
                             break;
+                    }
             }
         }
 
@@ -362,7 +382,10 @@ namespace SolarSystemDefense
             ForegroundDepth.Draw(Graphic.UFO, StageMap.Walkpoints[0], null, Color.White, StageMap.Walkpoints[0].Angle(StageMap.Walkpoints[1]) + MathHelper.PiOver2, Graphic.UFO.Center(), 1f, SpriteEffects.None, 1f);
 
             if (WatchObject != null)
+            {
                 ForegroundDepth.Draw((Texture2D)WatchObject[0], (Vector2)WatchObject[1], null, Color.LightBlue, 0, ((Texture2D)WatchObject[0]).Center(), 1f, SpriteEffects.None, 0f);
+
+            }
         }
     }
 }
