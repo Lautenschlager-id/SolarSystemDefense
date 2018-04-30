@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Text;
@@ -14,7 +15,8 @@ namespace SolarSystemDefense
 
         bool DrawStage = true;
 
-        cBox ItemPanel, CopyStageCode, Reset, Exit;
+        List<cBox> Buttons = new List<cBox>();
+        cBox ItemPanel, Button;
         cLabel totalLines, tutorial;
         public wStageEditor()
         {
@@ -32,58 +34,54 @@ namespace SolarSystemDefense
             };
             AlignLineCounter();
             ComponentManager.New(totalLines);
-            
-            CopyStageCode = new cBox("Copy stage code", Font.Text, 0, 0, 180, 40, true)
-            {
-                Visible = false,
-                ComponentColor = Info.Colors["Button"],
-                TextColor = Info.Colors["ButtonText"],
-                Alpha = .5f
+
+            List<List<object>> ButtonTexts = new List<List<object>>() {
+                new List<object> { "Export code", null },
+                new List<object> { "Copy stage code",
+                    new EventHandler((obj, arg) => {
+                        if (Level.Walkpoints.Count > 1)
+                        {
+                            MemoryStream memory = new MemoryStream();
+
+                            DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(Info.StageTable));
+                            serializer.WriteObject(memory, Level);
+
+                            byte[] JSON = memory.ToArray();
+                            memory.Close();
+
+                            System.Windows.Forms.Clipboard.SetText(Encoding.UTF8.GetString(JSON, 0, JSON.Length));
+                        }
+                    })
+                },
+                new List<object> { "Reset building",
+                    new EventHandler((obj, arg) => {
+                        Level.Walkpoints.Clear();
+                        AlignLineCounter();
+
+                        foreach (cBox btn in Buttons)
+                            btn.Visible = (DrawStage && Level.Walkpoints.Count > 1);
+                        DrawStage = true;
+                    })
+                },
+                new List<object> { "Exit", null },
             };
-            Vector2 pos = CopyStageCode.GetCoordinates(ItemPanel.GetDimension, "xcenter", 0, 100);
-            CopyStageCode.SetPosition((int)pos.X, (int)pos.Y);
-            CopyStageCode.OnClick += new EventHandler((obj, arg) => {
-                if (Level.Walkpoints.Count > 1)
+
+            Vector2 Position = ItemPanel.GetCoordinates(ItemPanel.GetDimension, "xcenter", 0, 50);
+            foreach (List<object> buttonInfo in ButtonTexts)
+            {
+                Button = new cBox((string)buttonInfo[0], Font.Text, 0, 0, 180, 40, true)
                 {
-                    MemoryStream memory = new MemoryStream();
-
-                    DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(Info.StageTable));
-                    serializer.WriteObject(memory, Level);
-
-                    byte[] JSON = memory.ToArray();
-                    memory.Close();
-
-                    System.Windows.Forms.Clipboard.SetText(Encoding.UTF8.GetString(JSON, 0, JSON.Length));
-                }
-            });
-            ComponentManager.New(CopyStageCode);
-
-            Reset = new cBox("Reset building", Font.Text, 0, 0, 180, 40, true)
-            {
-                Visible = false,
-                ComponentColor = Info.Colors["Button"],
-                TextColor = Info.Colors["ButtonText"],
-                Alpha = .5f
-            };
-            pos = Reset.GetCoordinates(ItemPanel.GetDimension, "xcenter", 0, 150);
-            Reset.SetPosition((int)pos.X, (int)pos.Y);
-            Reset.OnClick += new EventHandler((obj, arg) =>
-            {
-                Level.Walkpoints.Clear();
-                AlignLineCounter();
-            });
-            ComponentManager.New(Reset);
-
-            Exit = new cBox("Exit", Font.Text, 0, 0, 180, 40, true)
-            {
-                Visible = false,
-                ComponentColor = Info.Colors["Button"],
-                TextColor = Info.Colors["ButtonText"],
-                Alpha = .5f
-            };
-            pos = Exit.GetCoordinates(ItemPanel.GetDimension, "xcenter", 0, 200);
-            Exit.SetPosition((int)pos.X, (int)pos.Y);
-            ComponentManager.New(Exit);
+                    Visible = false,
+                    ComponentColor = Info.Colors["Button"],
+                    TextColor = Info.Colors["ButtonText"],
+                    Alpha = .5f
+                };
+                Position.Y += 50;
+                Button.SetPosition((int)Position.X, (int)Position.Y);
+                Button.OnClick += (EventHandler)buttonInfo[1];
+                Buttons.Add(Button);
+                ComponentManager.New(Button);
+            }
 
             tutorial = new cLabel(
                 "Click in the map besides\n" +
@@ -100,8 +98,8 @@ namespace SolarSystemDefense
             {
                 ContentColor = new Color(146, 91, 255).Collection()
             };
-            pos = tutorial.GetCoordinates(ItemPanel.GetDimension, "xcenter bottom", 0, -50);
-            tutorial.SetPosition((int)pos.X, (int)pos.Y);
+            Position = tutorial.GetCoordinates(ItemPanel.GetDimension, "xcenter bottom", 0, -50);
+            tutorial.SetPosition((int)Position.X, (int)Position.Y);
             ComponentManager.New(tutorial);
 
             Main.GameBound = new Rectangle(0, 0, Main.ViewPort.Width - (int)ItemPanel.GetSize.X, Main.ViewPort.Height);
@@ -119,9 +117,10 @@ namespace SolarSystemDefense
         {
             if (Control.KeyDown(Keys.Space))
             {
-                if (Level.Walkpoints.Count > 0 || !DrawStage)
+                if (Level.Walkpoints.Count > 1 || !DrawStage)
                 {
-                    CopyStageCode.Visible = Reset.Visible = Exit.Visible = DrawStage && Level.Walkpoints.Count > 1;
+                    foreach (cBox btn in Buttons)
+                        btn.Visible = (DrawStage && Level.Walkpoints.Count > 1);
                     DrawStage = !DrawStage;
                 }
             }
