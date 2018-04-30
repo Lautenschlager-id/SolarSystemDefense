@@ -4,7 +4,7 @@ namespace SolarSystemDefense
 {
     abstract class GameStage
     {
-        public abstract void Update();
-        public abstract void Draw(SpriteBatch BackgroundDepth, SpriteBatch MediumDepth, SpriteBatch ForegroundDepth);
+        public virtual void Update() { }
+        public virtual void Draw(SpriteBatch BackgroundDepth, SpriteBatch MediumDepth, SpriteBatch ForegroundDepth) { }
     }
 }

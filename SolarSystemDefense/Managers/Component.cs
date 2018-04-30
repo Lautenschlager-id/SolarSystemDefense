@@ -94,7 +94,7 @@ namespace SolarSystemDefense
         }
         public virtual Vector2 GetCoordinates(string Align, int XAxis = 0, int YAxis = 0, int Margin = Font.Margin, float Width = 1f, float Height = 1f)
         {
-            return GetCoordinates(new Rectangle(0, 0, (int)Main.ScreenDimension.X, (int)Main.ScreenDimension.Y), Align, 0, 0, Margin, Width, Height);
+            return GetCoordinates(Main.ViewPort.Bounds, Align, 0, 0, Margin, Width, Height);
         }
 
         public virtual void Update()

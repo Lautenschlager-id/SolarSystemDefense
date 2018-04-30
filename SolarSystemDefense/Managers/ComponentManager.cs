@@ -20,7 +20,7 @@ namespace SolarSystemDefense
 
         public static void Update()
         {
-            foreach (Component c in Components)
+            foreach (Component c in Components.GetRange(0, Components.Count))
                 c.Update();
 
             Components = Components.Where(e => !e.Remove).ToList();
@@ -28,7 +28,7 @@ namespace SolarSystemDefense
 
         public static void Draw(SpriteBatch BackgroundDepth, SpriteBatch MediumDepth, SpriteBatch ForegroundDepth)
         {
-            foreach (Component c in Components)
+            foreach (Component c in Components.GetRange(0, Components.Count))
                 c.Draw(BackgroundDepth, MediumDepth, ForegroundDepth);
         }
     }

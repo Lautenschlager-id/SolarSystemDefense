@@ -9,6 +9,7 @@ namespace SolarSystemDefense
         {
             Presentation,
             Menu,
+            Help,
             StageEditor,
             Playing,
         }
@@ -22,6 +23,7 @@ namespace SolarSystemDefense
             set
             {
                 CurrentGameWindow = value;
+                ComponentManager.Clear();
                 SetStage();
             }
         }
@@ -71,6 +73,9 @@ namespace SolarSystemDefense
                     break;
                 case GameState.StageEditor:
                     CurrentStage = new wStageEditor();
+                    break;
+                case GameState.Help:
+                    CurrentStage = new wHelp();
                     break;
             }
         }

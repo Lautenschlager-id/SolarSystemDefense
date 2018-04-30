@@ -101,6 +101,7 @@
     <Compile Include="Libs\Utils.cs" />
     <Compile Include="Stages\wStageEditor.cs" />
     <Compile Include="Stages\wPresentation.cs" />
+    <Compile Include="wHelp.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

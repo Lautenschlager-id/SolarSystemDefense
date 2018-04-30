@@ -16,7 +16,7 @@ namespace SolarSystemDefense
         bool DrawStage = true;
 
         List<cBox> Buttons = new List<cBox>();
-        cBox ItemPanel, Button;
+        cBox ItemPanel;
         cLabel totalLines, tutorial;
         public wStageEditor()
         {
@@ -37,35 +37,32 @@ namespace SolarSystemDefense
 
             List<List<object>> ButtonTexts = new List<List<object>>() {
                 new List<object> { "Export code", null },
-                new List<object> { "Copy stage code",
-                    new EventHandler((obj, arg) => {
-                        if (Level.Walkpoints.Count > 1)
-                        {
-                            MemoryStream memory = new MemoryStream();
+                new List<object> { "Copy stage code", new EventHandler((obj, arg) => {
+                    if (Level.Walkpoints.Count > 1)
+                    {
+                        MemoryStream memory = new MemoryStream();
 
-                            DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(Info.StageTable));
-                            serializer.WriteObject(memory, Level);
+                        DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(Info.StageTable));
+                        serializer.WriteObject(memory, Level);
 
-                            byte[] JSON = memory.ToArray();
-                            memory.Close();
+                        byte[] JSON = memory.ToArray();
+                        memory.Close();
 
-                            System.Windows.Forms.Clipboard.SetText(Encoding.UTF8.GetString(JSON, 0, JSON.Length));
-                        }
-                    })
-                },
-                new List<object> { "Reset building",
-                    new EventHandler((obj, arg) => {
-                        Level.Walkpoints.Clear();
-                        AlignLineCounter();
+                        System.Windows.Forms.Clipboard.SetText(Encoding.UTF8.GetString(JSON, 0, JSON.Length));
+                    }
+                })},
+                new List<object> { "Reset building", new EventHandler((obj, arg) => {
+                    Level.Walkpoints.Clear();
+                    AlignLineCounter();
 
-                        foreach (cBox btn in Buttons)
-                            btn.Visible = (DrawStage && Level.Walkpoints.Count > 1);
-                        DrawStage = true;
-                    })
-                },
-                new List<object> { "Exit", null },
+                    foreach (cBox btn in Buttons)
+                        btn.Visible = (DrawStage && Level.Walkpoints.Count > 1);
+                    DrawStage = true;
+                })},
+                new List<object> { "Exit", new EventHandler((obj, arg) => Main.CurrentGameState = Main.GameState.Menu) },
             };
 
+            cBox Button;
             Vector2 Position = ItemPanel.GetCoordinates(ItemPanel.GetDimension, "xcenter", 0, 50);
             foreach (List<object> buttonInfo in ButtonTexts)
             {
