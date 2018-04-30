@@ -16,7 +16,7 @@ namespace SolarSystemDefense
         {
             Score = 0,
             Life = 100,
-            Cash = 110
+            Cash = 150
         };
 
         enum RoundStage

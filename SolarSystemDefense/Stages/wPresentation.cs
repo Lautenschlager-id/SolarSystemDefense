@@ -7,7 +7,7 @@ namespace SolarSystemDefense
     class wPresentation : GameStage
     {
         const float tUpdate = .02f;
-        const int GoNext = 1;
+        const int GoNext = 6;
 
         float Timer = 0;
         int CurrentImageID = 0;

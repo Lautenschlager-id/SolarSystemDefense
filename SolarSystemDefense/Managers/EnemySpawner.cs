@@ -7,6 +7,7 @@ namespace SolarSystemDefense
     {
         static int CurrentQueuePosition = 0;
         static int[] Queue = new int[] { 0, 0, 0, 1, 0, 1, 0, 2, 0, 0, 3 };
+        static float TransitionTime = 10;
 
         class Spawn
         {
@@ -50,7 +51,7 @@ namespace SolarSystemDefense
         static EnemySpawner()
         {
             SpawnData.Add(new Spawn(ID: 0, TotalEnemy4Queue: 8));
-            SpawnData.Add(new Spawn(ID: 1, TotalEnemy4Queue: 20));
+            SpawnData.Add(new Spawn(ID: 1, TotalEnemy4Queue: 13));
             SpawnData.Add(new Spawn(ID: 2, TotalEnemy4Queue: 10));
             SpawnData.Add(new Spawn(ID: 3, TotalEnemy4Queue: 1));
         }
@@ -75,8 +76,9 @@ namespace SolarSystemDefense
                         EntityManager.New(new Enemy(s.ID, Position));
                 }
             }
-            else if (EntityManager.Enemies.Count == 0)
+            else if (EntityManager.Enemies.Count == 0 && (TransitionTime -= .1f) <= 0)
             {
+                TransitionTime = 10;
                 SpawnData[index].RefreshTotalEnemy4Queue();
                 if (++CurrentQueuePosition >= Queue.Length)
                 {

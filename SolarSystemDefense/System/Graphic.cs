@@ -26,6 +26,8 @@ namespace SolarSystemDefense
         public static Texture2D InfoTimer { get; private set; }
         public static Texture2D InfoSpeed { get; private set; }
 
+        public static Texture2D[] Help { get; private set; }
+
         public static void LoadContent(ContentManager content)
         {
             Background = content.Load<Texture2D>("Graphic/background");
@@ -57,6 +59,8 @@ namespace SolarSystemDefense
             InfoSpeed = content.Load<Texture2D>("Graphic/UI/popup_speed");
 
             Presentation = Enumerable.Range(1, 1).Select(id => content.Load<Texture2D>("Graphic/Presentation/" + (id - 1))).ToArray();
+
+            Help = Enumerable.Range(1, 2).Select(id => content.Load<Texture2D>("Graphic/Help/" + (id - 1))).ToArray();
         }
     }
 }

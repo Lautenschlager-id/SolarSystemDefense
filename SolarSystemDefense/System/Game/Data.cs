@@ -79,7 +79,7 @@ namespace SolarSystemDefense
                     Cooldown: 50,
                     ActionArea: 110,
                     Speed: 4f,
-                    SpeedDamage: 3.5f
+                    SpeedDamage: 6f
                 )
             },
 
