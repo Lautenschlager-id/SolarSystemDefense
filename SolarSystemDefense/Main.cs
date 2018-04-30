@@ -7,10 +7,24 @@ namespace SolarSystemDefense
     {
         public enum GameState
         {
+            Presentation,
+            Menu,
             StageEditor,
             Playing,
         }
-        public static GameState CurrentGameState = GameState.Playing;
+        static GameState CurrentGameWindow = GameState.Presentation;
+        public static GameState CurrentGameState
+        {
+            get
+            {
+                return CurrentGameWindow;
+            }
+            set
+            {
+                CurrentGameWindow = value;
+                SetStage();
+            }
+        }
 
         static GraphicsDeviceManager graphics;
         SpriteBatch BackgroundDepth, MediumDepth, ForegroundDepth;
@@ -41,11 +55,17 @@ namespace SolarSystemDefense
         }
 
         static GameStage CurrentStage;
-        public static void SetStage()
+        static void SetStage()
         {
             ComponentManager.Clear();
-            switch (CurrentGameState)
+            switch (CurrentGameWindow)
             {
+                case GameState.Presentation:
+                    CurrentStage = new wPresentation();
+                    break;
+                case GameState.Menu:
+                    CurrentStage = new wMenu();
+                    break;
                 case GameState.Playing:
                     CurrentStage = new wGame();
                     break;
@@ -96,7 +116,7 @@ namespace SolarSystemDefense
             GraphicsDevice.Clear(Color.Black);
 
             BackgroundDepth.Begin();
-            BackgroundDepth.Draw(Graphic.Background, Vector2.Zero, Color.White);
+            Background.Draw(BackgroundDepth);
             BackgroundDepth.End();
 
             ForegroundDepth.Begin();

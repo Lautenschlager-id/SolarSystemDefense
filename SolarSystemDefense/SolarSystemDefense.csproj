@@ -73,7 +73,9 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="System\Game\Background.cs" />
     <Compile Include="Components\cLabel.cs" />
+    <Compile Include="Stages\wMenu.cs" />
     <Compile Include="Objects\Feature.cs" />
     <Compile Include="Managers\EnemySpawner.cs" />
     <Compile Include="Objects\Enemy.cs" />
@@ -98,6 +100,7 @@
     <Compile Include="Main.cs" />
     <Compile Include="Libs\Utils.cs" />
     <Compile Include="Stages\wStageEditor.cs" />
+    <Compile Include="Stages\wPresentation.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
