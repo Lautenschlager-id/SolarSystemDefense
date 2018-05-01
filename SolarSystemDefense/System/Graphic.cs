@@ -18,7 +18,7 @@ namespace SolarSystemDefense
 
         public static Texture2D Pixel { get; private set; }
 
-        public static Texture2D Earth { get; private set; }
+        public static Texture2D[] Earth { get; private set; }
         public static Texture2D Water { get; private set; }
         public static Texture2D UFO { get; private set; }
 
@@ -48,7 +48,7 @@ namespace SolarSystemDefense
             for (int i = 0; i < Enemies.Length; i++)
                 Data.EnemyData[i].CollisionRadius.Value = Enemies[i].Width / 2f;
 
-            Earth = content.Load<Texture2D>("Graphic/Objects/object_earth");
+            Earth = Enumerable.Range(1, 2).Select(id => content.Load<Texture2D>("Graphic/Objects/object_earth" + (id - 1))).ToArray();
             Water = content.Load<Texture2D>("Graphic/Objects/feature_water");
             UFO = content.Load<Texture2D>("Graphic/Objects/object_ufo");
 

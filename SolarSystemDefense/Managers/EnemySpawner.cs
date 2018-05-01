@@ -5,9 +5,9 @@ namespace SolarSystemDefense
 {
     static class EnemySpawner
     {
-        static int CurrentQueuePosition = 0;
-        static int[] Queue = new int[] { 0, 0, 0, 1, 0, 1, 0, 2, 0, 0, 3 };
-        static float TransitionTime = 10;
+        static int CurrentQueuePosition;
+        static int[] Queue ;
+        static float TransitionTime;
 
         class Spawn
         {
@@ -48,12 +48,23 @@ namespace SolarSystemDefense
         }
 
         static List<Spawn> SpawnData = new List<Spawn>();
-        static EnemySpawner()
+        public static void Reset()
         {
+            SpawnData.Clear();
+
             SpawnData.Add(new Spawn(ID: 0, TotalEnemy4Queue: 8));
             SpawnData.Add(new Spawn(ID: 1, TotalEnemy4Queue: 13));
             SpawnData.Add(new Spawn(ID: 2, TotalEnemy4Queue: 10));
             SpawnData.Add(new Spawn(ID: 3, TotalEnemy4Queue: 1));
+
+            CurrentQueuePosition = 0;
+            Queue = new int[] { 0, 0, 0, 1, 0, 1, 0, 2, 0, 0, 3 };
+            TransitionTime = 10;
+        }
+
+        static EnemySpawner()
+        {
+            Reset();
         }
 
         static Vector2 Position;
