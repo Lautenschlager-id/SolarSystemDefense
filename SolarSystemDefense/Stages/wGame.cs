@@ -249,6 +249,7 @@ namespace SolarSystemDefense
             memory.Close();
         }
 
+        List<cBox> Curtains = new List<cBox>();
         private void GameOver()
         {
             CurrentStage = RoundStage.GameOver;
@@ -260,7 +261,44 @@ namespace SolarSystemDefense
 
             EarthID++;
 
+            cBox Curtain = new cBox(0, -Main.ViewPort.Bounds.Height / 2, Main.ViewPort.Bounds.Width, Main.ViewPort.Bounds.Height / 2)
+            {
+                ComponentColor = Color.Black.Collection(),
+                Alpha = .6f
+            };
+            Curtains.Add(Curtain);
+            Curtain = new cBox(0, Main.ViewPort.Bounds.Height, Main.ViewPort.Bounds.Width, Main.ViewPort.Bounds.Height / 2)
+            {
+                ComponentColor = Color.Black.Collection(),
+                Alpha = .6f
+            };
+            Curtains.Add(Curtain);
 
+            cLabel GameOverMessage = new cLabel("You failed. The Earth was destroyed!", Font.BigText, 0, 0);
+            Vector2 Position = GameOverMessage.GetCoordinates("xcenter ycenter");
+            GameOverMessage.SetPosition((int)Position.X, (int)Position.Y - 80);
+            ComponentManager.New(GameOverMessage);
+
+            cBox Button = new cBox("Try again!", Font.Text, 0, 0, 200, 40, true)
+            {
+                ComponentColor = Info.Colors["Button"],
+                TextColor = Info.Colors["ButtonText"],
+                Alpha = .5f
+            };
+            Button.OnClick += new EventHandler((obj, arg) => Main.CurrentGameState = Main.GameState.Playing);
+            Position = Button.GetCoordinates("xcenter ycenter", 0);
+            Button.SetPosition((int)Position.X, (int)Position.Y - 25);
+            ComponentManager.New(Button);
+
+            Button = new cBox("Quit", Font.Text, 0, 0, 200, 40, true)
+            {
+                ComponentColor = Info.Colors["Button"],
+                TextColor = Info.Colors["ButtonText"],
+                Alpha = .5f
+            };
+            Button.OnClick += new EventHandler((obj, arg) => Main.CurrentGameState = Main.GameState.Menu);
+            Button.SetPosition((int)Position.X, (int)Position.Y + 25);
+            ComponentManager.New(Button);
         }
 
         private void eventSelectedObject(object obj, EventArgs arg)
@@ -599,6 +637,13 @@ namespace SolarSystemDefense
                         }
                 }
             }
+            if (Curtains.Count > 0)
+            {
+                if (Curtains[0].GetPosition.Y < 0)
+                    Curtains[0].SetPosition(0, (int)Curtains[0].GetPosition.Y + 1);
+                if (Curtains[1].GetPosition.Y > Main.ViewPort.Bounds.Height / 2)
+                    Curtains[1].SetPosition(0, (int)Curtains[1].GetPosition.Y - 1);
+            }
         }
 
         public override void Draw(SpriteBatch BackgroundDepth, SpriteBatch MediumDepth, SpriteBatch ForegroundDepth)
@@ -634,6 +679,10 @@ namespace SolarSystemDefense
                 foreach (Component d in PopUpComponents)
                     d.Draw(BackgroundDepth, MediumDepth, ForegroundDepth);
             }
+
+            if (Curtains.Count > 0)
+                foreach (cBox o in Curtains)
+                    o.Draw(BackgroundDepth, MediumDepth, ForegroundDepth);
         }
     }
 }
