@@ -250,6 +250,7 @@ namespace SolarSystemDefense
         }
 
         List<cBox> Curtains = new List<cBox>();
+        List<Component> cGameOver = new List<Component>();
         private void GameOver()
         {
             CurrentStage = RoundStage.GameOver;
@@ -277,7 +278,7 @@ namespace SolarSystemDefense
             cLabel GameOverMessage = new cLabel("You failed. The Earth was destroyed!", Font.BigText, 0, 0);
             Vector2 Position = GameOverMessage.GetCoordinates("xcenter ycenter");
             GameOverMessage.SetPosition((int)Position.X, (int)Position.Y - 80);
-            ComponentManager.New(GameOverMessage);
+            cGameOver.Add(GameOverMessage);
 
             cBox Button = new cBox("Try again!", Font.Text, 0, 0, 200, 40, true)
             {
@@ -288,7 +289,7 @@ namespace SolarSystemDefense
             Button.OnClick += new EventHandler((obj, arg) => Main.CurrentGameState = Main.GameState.Playing);
             Position = Button.GetCoordinates("xcenter ycenter", 0);
             Button.SetPosition((int)Position.X, (int)Position.Y - 25);
-            ComponentManager.New(Button);
+            cGameOver.Add(Button);
 
             Button = new cBox("Quit", Font.Text, 0, 0, 200, 40, true)
             {
@@ -298,7 +299,7 @@ namespace SolarSystemDefense
             };
             Button.OnClick += new EventHandler((obj, arg) => Main.CurrentGameState = Main.GameState.Menu);
             Button.SetPosition((int)Position.X, (int)Position.Y + 25);
-            ComponentManager.New(Button);
+            cGameOver.Add(Button);
         }
 
         private void eventSelectedObject(object obj, EventArgs arg)
@@ -643,46 +644,54 @@ namespace SolarSystemDefense
                     Curtains[0].SetPosition(0, (int)Curtains[0].GetPosition.Y + 1);
                 if (Curtains[1].GetPosition.Y > Main.ViewPort.Bounds.Height / 2)
                     Curtains[1].SetPosition(0, (int)Curtains[1].GetPosition.Y - 1);
+
+                foreach (Component c in cGameOver)
+                    c.Update();
             }
         }
 
-        public override void Draw(SpriteBatch BackgroundDepth, SpriteBatch MediumDepth, SpriteBatch ForegroundDepth)
+        public override void Draw(SpriteBatch Layer)
         {
             foreach (cBox c in AvailableObjects)
-                c.Draw(BackgroundDepth, MediumDepth, ForegroundDepth);
+                c.Draw(Layer);
 
             for (int p = 0; p < StageMap.Walkpoints.Count - 1; p++)
-                new Utils.Line(StageMap.Walkpoints[p + 1], StageMap.Walkpoints[p], 2, Color.FloralWhite, .4f).Draw(MediumDepth);
+                new Utils.Line(StageMap.Walkpoints[p + 1], StageMap.Walkpoints[p], 2, Color.FloralWhite, .4f).Draw(Layer);
 
-            EntityManager.Draw(BackgroundDepth, MediumDepth, ForegroundDepth);
+            EntityManager.Draw(Layer);
 
             if (SelectedObject.buildID >= 0)
             {
                 if (SelectedObject.actionArea != null)
-                    ForegroundDepth.Draw(SelectedObject.actionArea, Control.MouseCoordinates, null, Color.LightBlue, 0, SelectedObject.actionArea.Center(), 1f, SpriteEffects.None, 0f);
+                    Layer.Draw(SelectedObject.actionArea, Control.MouseCoordinates, null, Color.LightBlue, 0, SelectedObject.actionArea.Center(), 1f, SpriteEffects.None, 0f);
                 Texture2D sprite = (SelectedObject.isShooter ? Graphic.Shooters : Graphic.Features)[SelectedObject.buildID];
-                ForegroundDepth.Draw(sprite, Control.MouseCoordinates, null, (SelectedObject.allowBuild ? Color.White : Color.Red) * .6f, SelectedObject.angle, sprite.Center(), 1f, SpriteEffects.None, 0f);
+                Layer.Draw(sprite, Control.MouseCoordinates, null, (SelectedObject.allowBuild ? Color.White : Color.Red) * .6f, SelectedObject.angle, sprite.Center(), 1f, SpriteEffects.None, 0f);
             }
 
             int LastWalkpoint = StageMap.Walkpoints.Count - 1;
-            ForegroundDepth.Draw(Graphic.Earth[EarthID], StageMap.Walkpoints[LastWalkpoint], null, Color.White, StageMap.Walkpoints[LastWalkpoint].Angle(StageMap.Walkpoints[LastWalkpoint - 1]) + MathHelper.PiOver2, Graphic.Earth[EarthID].Center(), 1f, SpriteEffects.None, 1f);
-            ForegroundDepth.Draw(Graphic.UFO, StageMap.Walkpoints[0], null, Color.White, StageMap.Walkpoints[0].Angle(StageMap.Walkpoints[1]) + MathHelper.PiOver2, Graphic.UFO.Center(), 1f, SpriteEffects.None, 1f);
+            Layer.Draw(Graphic.Earth[EarthID], StageMap.Walkpoints[LastWalkpoint], null, Color.White, StageMap.Walkpoints[LastWalkpoint].Angle(StageMap.Walkpoints[LastWalkpoint - 1]) + MathHelper.PiOver2, Graphic.Earth[EarthID].Center(), 1f, SpriteEffects.None, 1f);
+            Layer.Draw(Graphic.UFO, StageMap.Walkpoints[0], null, Color.White, StageMap.Walkpoints[0].Angle(StageMap.Walkpoints[1]) + MathHelper.PiOver2, Graphic.UFO.Center(), 1f, SpriteEffects.None, 1f);
 
             if (WatchObject != null)
             {
-                ForegroundDepth.Draw((Texture2D)WatchObject[1], ((Entity)WatchObject[2]).Position, null, Color.LightBlue, 0, ((Texture2D)WatchObject[1]).Center(), 1f, SpriteEffects.None, 0f);
-                ((cBox)WatchObject[0]).Draw(BackgroundDepth, MediumDepth, ForegroundDepth);
+                Layer.Draw((Texture2D)WatchObject[1], ((Entity)WatchObject[2]).Position, null, Color.LightBlue, 0, ((Texture2D)WatchObject[1]).Center(), 1f, SpriteEffects.None, 0f);
+                ((cBox)WatchObject[0]).Draw(Layer);
             }
             if (InfoPopUp != null)
             {
-                InfoPopUp.Draw(BackgroundDepth, MediumDepth, ForegroundDepth);
+                InfoPopUp.Draw(Layer);
                 foreach (Component d in PopUpComponents)
-                    d.Draw(BackgroundDepth, MediumDepth, ForegroundDepth);
+                    d.Draw(Layer);
             }
 
             if (Curtains.Count > 0)
+            {
                 foreach (cBox o in Curtains)
-                    o.Draw(BackgroundDepth, MediumDepth, ForegroundDepth);
+                    o.Draw(Layer);
+
+                foreach (Component c in cGameOver)
+                    c.Draw(Layer);
+            }
         }
     }
 }

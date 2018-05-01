@@ -62,9 +62,9 @@ namespace SolarSystemDefense
             ComponentManager.New(LeftButton);
         }
 
-        public override void Draw(SpriteBatch BackgroundDepth, SpriteBatch MediumDepth, SpriteBatch ForegroundDepth)
+        public override void Draw(SpriteBatch Layer)
         {
-            BackgroundDepth.Draw(Graphic.Help[Image], ImagePosition, Color.White);
+            Layer.Draw(Graphic.Help[Image], ImagePosition, Color.White);
         }
     }
 }

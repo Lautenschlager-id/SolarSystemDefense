@@ -8,6 +8,7 @@ namespace SolarSystemDefense
     {
         public bool Visible = true, Remove = false, MouseHover = false;
         public float Alpha = 1f;
+        public float LayerDepth = Info.LayerDepth["Middleground"];
         // [] = Not hover, Hover
         public Color[] ComponentColor = Color.White.Collection(), ContentColor = Color.White.Collection();
 
@@ -115,6 +116,6 @@ namespace SolarSystemDefense
             }
         }
 
-        public abstract void Draw(SpriteBatch BackgroundDepth, SpriteBatch MediumDepth, SpriteBatch ForegroundDepth);
+        public abstract void Draw(SpriteBatch Layer);
     }
 }

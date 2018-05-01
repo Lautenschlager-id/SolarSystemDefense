@@ -20,5 +20,12 @@ namespace SolarSystemDefense
             { "ButtonText", new Color[] { new Color(57, 205, 205), new Color(57, 205, 205) } },
             { "InfoBox", new Color(78, 4, 99).Collection() },
         };
+
+        public static Dictionary<string, float> LayerDepth = new Dictionary<string, float>()
+        {
+            { "Background", 0 },
+            { "Middleground", .5f },
+            { "Foreground", 1 },
+        };
     }
 }

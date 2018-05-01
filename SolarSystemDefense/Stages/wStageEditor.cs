@@ -137,7 +137,7 @@ namespace SolarSystemDefense
             }
         }
 
-        public override void Draw(SpriteBatch BackgroundDepth, SpriteBatch MediumDepth, SpriteBatch ForegroundDepth)
+        public override void Draw(SpriteBatch Layer)
         {
             for (int p = 0; p < Level.Walkpoints.Count; p++)
             {
@@ -154,7 +154,7 @@ namespace SolarSystemDefense
                     p2 = Level.Walkpoints[p];
                 }
 
-                new Utils.Line(p1, p2, 2, p == 0 ? Color.LimeGreen : p == Level.Walkpoints.Count - 2 ? Color.DarkRed : Color.Yellow).Draw(MediumDepth);
+                new Utils.Line(p1, p2, 2, p == 0 ? Color.LimeGreen : p == Level.Walkpoints.Count - 2 ? Color.DarkRed : Color.Yellow).Draw(Layer);
             } 
         }
     }

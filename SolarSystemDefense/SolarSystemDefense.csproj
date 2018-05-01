@@ -77,14 +77,14 @@
     <Compile Include="Components\cLabel.cs" />
     <Compile Include="Stages\wMenu.cs" />
     <Compile Include="Objects\Feature.cs" />
-    <Compile Include="Managers\EnemySpawner.cs" />
+    <Compile Include="Managers\Game\EnemySpawner.cs" />
     <Compile Include="Objects\Enemy.cs" />
     <Compile Include="System\Info.cs" />
     <Compile Include="System\Font.cs" />
-    <Compile Include="Managers\ComponentManager.cs" />
+    <Compile Include="Managers\Game\ComponentManager.cs" />
     <Compile Include="Managers\Component.cs" />
     <Compile Include="Components\cBox.cs" />
-    <Compile Include="Managers\EntityManager.cs" />
+    <Compile Include="Managers\Game\EntityManager.cs" />
     <Compile Include="Managers\GameStage.cs" />
     <Compile Include="System\Game\Data.cs" />
     <Compile Include="Libs\Extensions.cs" />

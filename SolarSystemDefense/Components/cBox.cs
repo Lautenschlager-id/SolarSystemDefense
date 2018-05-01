@@ -48,6 +48,15 @@ namespace SolarSystemDefense
                     label.ContentColor = value;
             }
         }
+        public float SetLayerDepth
+        {
+            set
+            {
+                LayerDepth = value;
+                if (HasLabel)
+                    label.LayerDepth = LayerDepth;
+            }
+        }
 
         public cBox(int XPosition, int YPosition, int Width = 50, int Height = 50, bool ToggleColorOnHover = false)
             : base(XPosition, YPosition, Width, Height)
@@ -120,14 +129,14 @@ namespace SolarSystemDefense
             if (label != null) label.MouseHover = MouseHover;
         }
 
-        public override void Draw(SpriteBatch BackgroundDepth, SpriteBatch MediumDepth, SpriteBatch ForegroundDepth)
+        public override void Draw(SpriteBatch Layer)
         {
             if (!Remove && Visible)
             {
-                MediumDepth.Draw(Texture, Shape, null, ComponentColor[(ToggleColorOnHover && MouseHover) ? 1 : 0] * Alpha);
+                Layer.Draw(Texture, Shape, null, ComponentColor[(ToggleColorOnHover && MouseHover) ? 1 : 0] * Alpha, 0, Vector2.Zero, SpriteEffects.None, LayerDepth);
                 if (HasContent)
-                    MediumDepth.Draw(GetContent, ContentPosition, null, ContentColor[(ToggleColorOnHover && MouseHover) ? 1 : 0] * Alpha, 0, ContentRadius, 1f, 0, 0);
-                label?.Draw(BackgroundDepth, MediumDepth, ForegroundDepth);
+                    Layer.Draw(GetContent, ContentPosition, null, ContentColor[(ToggleColorOnHover && MouseHover) ? 1 : 0] * Alpha, 0, ContentRadius, 1f, 0, LayerDepth);
+                label?.Draw(Layer);
             }
         }
     }

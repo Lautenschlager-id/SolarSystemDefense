@@ -7,6 +7,7 @@ namespace SolarSystemDefense
     {
         public const int Margin = 5;
 
+        public static SpriteFont BigText { get; private set; }
         public static SpriteFont Text { get; private set; }
         public static SpriteFont SmallText { get; private set; }
         public static SpriteFont Title { get; private set; }
@@ -16,6 +17,7 @@ namespace SolarSystemDefense
 
         public static void LoadContent(ContentManager content)
         {
+            BigText = content.Load<SpriteFont>("Font/BigText");
             Text = content.Load<SpriteFont>("Font/Text");
             SmallText = content.Load<SpriteFont>("Font/SmallText");
             Title = content.Load<SpriteFont>("Font/Title");

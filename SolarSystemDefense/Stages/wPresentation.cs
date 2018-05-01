@@ -35,10 +35,10 @@ namespace SolarSystemDefense
             }
         }
 
-        public override void Draw(SpriteBatch BackgroundDepth, SpriteBatch MediumDepth, SpriteBatch ForegroundDepth)
+        public override void Draw(SpriteBatch Layer)
         {
             Alpha -= tUpdate / 05f;
-            BackgroundDepth.Draw(CurrentImage, new Vector2(Main.ViewPort.Width - CurrentImage.Width, Main.ViewPort.Height - CurrentImage.Height) / 2f, Color.White * Alpha);
+            Layer.Draw(CurrentImage, new Vector2(Main.ViewPort.Width - CurrentImage.Width, Main.ViewPort.Height - CurrentImage.Height) / 2f, Color.White * Alpha);
         }
     }
 }

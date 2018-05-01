@@ -30,7 +30,7 @@ namespace SolarSystemDefense
         }
 
         static GraphicsDeviceManager graphics;
-        SpriteBatch BackgroundDepth, MediumDepth, ForegroundDepth;
+        SpriteBatch Layer;
 
         public static Main Instance { get; private set; }
         public static Viewport ViewPort
@@ -95,9 +95,7 @@ namespace SolarSystemDefense
 
         protected override void LoadContent()
         {
-            BackgroundDepth = new SpriteBatch(GraphicsDevice);
-            MediumDepth = new SpriteBatch(GraphicsDevice);
-            ForegroundDepth = new SpriteBatch(GraphicsDevice);
+            Layer = new SpriteBatch(GraphicsDevice);
 
             Graphic.LoadContent(Content);
             Font.LoadContent(Content);
@@ -121,18 +119,11 @@ namespace SolarSystemDefense
         {
             GraphicsDevice.Clear(Color.Black);
 
-            BackgroundDepth.Begin();
-            Background.Draw(BackgroundDepth);
-            BackgroundDepth.End();
-
-            ForegroundDepth.Begin();
-            MediumDepth.Begin();
-            BackgroundDepth.Begin();
-            ComponentManager.Draw(BackgroundDepth, MediumDepth, ForegroundDepth);
-            CurrentStage?.Draw(BackgroundDepth, MediumDepth, ForegroundDepth);
-            BackgroundDepth.End();
-            MediumDepth.End();
-            ForegroundDepth.End();
+            Layer.Begin();
+            Background.Draw(Layer);
+            ComponentManager.Draw(Layer);
+            CurrentStage?.Draw(Layer);
+            Layer.End();
 
             base.Draw(CurrentTime);
         }

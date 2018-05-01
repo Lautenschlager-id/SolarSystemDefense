@@ -88,10 +88,10 @@ namespace SolarSystemDefense
                 base.Update();
         }
 
-        public override void Draw(SpriteBatch BackgroundDepth, SpriteBatch MediumDepth, SpriteBatch ForegroundDepth)
+        public override void Draw(SpriteBatch Layer)
         {
             if (Visible)
-                MediumDepth.DrawString(TextFont, Text, GetPosition, ContentColor[(MouseHover ? 1 : 0)] * Alpha);
+                Layer.DrawString(TextFont, Text, GetPosition, ContentColor[(MouseHover ? 1 : 0)] * Alpha, 0, Vector2.Zero, 1, SpriteEffects.None, LayerDepth);
         }
     }
 }

@@ -138,7 +138,7 @@ namespace SolarSystemDefense
 
             {
                 2, new EnemyInfo(
-                    Life: 12,
+                    Life: 20,
                     Score: 120,
                     Cash: 20,
                     Damage: 10,
@@ -149,8 +149,8 @@ namespace SolarSystemDefense
             {
                 3, new EnemyInfo(
                     Life: 300,
-                    Score: 800,
-                    Cash: 500,
+                    Score: 500,
+                    Cash: 300,
                     Damage: 50,
                     Speed: 1.5f
                 )
