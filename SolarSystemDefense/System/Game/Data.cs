@@ -187,7 +187,7 @@ namespace SolarSystemDefense
                     Price: 500,
                     Speed: 4,
                     SpeedDamage: 25,
-                    Cooldown: 50
+                    Cooldown: 20
                 )
             },
 

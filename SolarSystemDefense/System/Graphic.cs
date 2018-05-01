@@ -28,6 +28,8 @@ namespace SolarSystemDefense
 
         public static Texture2D[] Help { get; private set; }
 
+        public static Texture2D Pause { get; private set; }
+
         public static void LoadContent(ContentManager content)
         {
             Background = content.Load<Texture2D>("Graphic/background");
@@ -61,6 +63,8 @@ namespace SolarSystemDefense
             Presentation = Enumerable.Range(1, 1).Select(id => content.Load<Texture2D>("Graphic/Presentation/" + (id - 1))).ToArray();
 
             Help = Enumerable.Range(1, 2).Select(id => content.Load<Texture2D>("Graphic/Help/" + (id - 1))).ToArray();
+
+            Pause = content.Load<Texture2D>("Graphic/pause");
         }
     }
 }

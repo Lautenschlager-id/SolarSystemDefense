@@ -23,6 +23,7 @@ namespace SolarSystemDefense
             set
             {
                 CurrentGameWindow = value;
+                EntityManager.Clear();
                 ComponentManager.Clear();
                 SetStage();
             }

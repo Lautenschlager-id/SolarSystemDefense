@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,6 +16,16 @@ namespace SolarSystemDefense
         static List<Bullet> Bullets = new List<Bullet>();
         public static List<Enemy> Enemies = new List<Enemy>();
         public static List<Feature> Features = new List<Feature>();
+
+        public static void Clear()
+        {
+            Entities.Clear();
+            NewEntities.Clear();
+            Shooters.Clear();
+            Bullets.Clear();
+            Enemies.Clear();
+            Features.Clear();
+        }
 
         public static int Count
         {
@@ -82,14 +91,17 @@ namespace SolarSystemDefense
 
         public static void Update()
         {
-            Updating = true;
+            if (wGame.Instance.CurrentStage == wGame.RoundStage.Running)
+            {
+                Updating = true;
 
-            CollisionHandler();
+                CollisionHandler();
 
-            foreach (Entity e in Entities)
-                e.Update();
+                foreach (Entity e in Entities)
+                    e.Update();
 
-            Updating = false;
+                Updating = false;
+            }
 
             foreach (Entity e in NewEntities)
                 InsertEntity(e);

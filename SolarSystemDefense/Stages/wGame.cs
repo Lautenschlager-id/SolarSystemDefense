@@ -19,13 +19,13 @@ namespace SolarSystemDefense
             Cash = 150
         };
 
-        enum RoundStage
+        public enum RoundStage
         {
-            PlacingShooters,
             Running,
-            Paused
+            Paused,
+            GameOver
         }
-        RoundStage CurrentStage;
+        public RoundStage CurrentStage = RoundStage.Paused;
 
         public Info.StageTable StageMap = new Info.StageTable();
 
@@ -57,15 +57,13 @@ namespace SolarSystemDefense
         cBox ObjectsPanel, InfoPopUp;
         List<Component> PopUpComponents = new List<Component>();
 
-        cLabel Title, PlayerLife, PlayerCash, PlayerScore;
+        cLabel PlayerLife, PlayerCash, PlayerScore;
         cLabel item_price; // visibility
         public wGame()
         {
             Instance = this;
 
             Main.Resize(900, 600);
-
-            CurrentStage = RoundStage.PlacingShooters;
 
             LoadStage();
             EnemySpawner.SetInitialPosition(StageMap.Walkpoints[0]);
@@ -84,11 +82,55 @@ namespace SolarSystemDefense
 
             Main.GameBound = new Rectangle(0, 0, Main.ViewPort.Width - (int)ObjectsPanel.GetSize.X, Main.ViewPort.Height);
 
+            cBox Pause = new cBox(Graphic.Pause, 0, 0)
+            {
+                Visible = false,
+                ComponentColor = Color.Transparent.Collection()
+            };
+            Pause.OnClick += new EventHandler((obj, arg) => {
+                if (CurrentStage == RoundStage.Paused)
+                    CurrentStage = RoundStage.Running;
+                else
+                    CurrentStage = RoundStage.Paused;
+            });
+            Vector2 pos = Pause.GetCoordinates(ObjectsPanel.GetDimension, "left top");
+            Pause.SetPosition((int)pos.X, (int)pos.Y);
+            ComponentManager.New(Pause);
+
+            bool Button_FirstExe = true;
+            cBox Button = new cBox("Start!", Font.Text, 0, 0, 125, 30, true)
+            {
+                ComponentColor = Info.Colors["Button"],
+                TextColor = Info.Colors["ButtonText"],
+                Alpha = .5f
+            };
+            Button.OnClick += new EventHandler((obj, arg) => {
+                if (CurrentStage == RoundStage.Running)
+                    Main.CurrentGameState = Main.GameState.Menu;
+                else
+                {
+                    if (Button_FirstExe)
+                    {
+                        Button_FirstExe = false;
+
+                        Button.SourceText = "Leave";
+                        Pause.Visible = true;
+
+                        pos = Button.GetCoordinates(ObjectsPanel.GetDimension, "right top", 0, 10);
+                        Button.SetPosition((int)pos.X, (int)pos.Y);
+                    }
+                    CurrentStage = RoundStage.Running;
+                }
+            });
+            pos = Button.GetCoordinates(ObjectsPanel.GetDimension, "xcenter top", 0, 10);
+            Button.SetPosition((int)pos.X, (int)pos.Y);
+            ComponentManager.New(Button);
+
             PlayerScore = new cLabel("SCORE : " + Player.Score, Font.Text, 0, 0)
             {
                 ContentColor = Color.GhostWhite.Collection()
             };
-            Vector2 pos = PlayerScore.GetCoordinates(ObjectsPanel.GetDimension, "xcenter top", 0, 20);
+            pos = PlayerScore.GetCoordinates(ObjectsPanel.GetDimension, "xcenter top", 0, 50);
             PlayerScore.SetPosition((int)pos.X, (int)pos.Y);
             ComponentManager.New(PlayerScore);
 
@@ -96,7 +138,7 @@ namespace SolarSystemDefense
             {
                 ContentColor = Color.LawnGreen.Collection()
             };
-            pos = PlayerLife.GetCoordinates(ObjectsPanel.GetDimension, "xcenter top", 0, 60);
+            pos = PlayerLife.GetCoordinates(ObjectsPanel.GetDimension, "xcenter", 0, (int)(pos.Y += 40));
             PlayerLife.SetPosition((int)pos.X, (int)pos.Y);
             ComponentManager.New(PlayerLife);
 
@@ -104,15 +146,15 @@ namespace SolarSystemDefense
             {
                 ContentColor = Color.Gold.Collection()
             };
-            pos = PlayerCash.GetCoordinates(ObjectsPanel.GetDimension, "xcenter top", 0, 80);
+            pos = PlayerCash.GetCoordinates(ObjectsPanel.GetDimension, "xcenter top", 0, (int)(pos.Y += 40));
             PlayerCash.SetPosition((int)pos.X, (int)pos.Y);
             ComponentManager.New(PlayerCash);
 
-            Title = new cLabel("Shooters", Font.Title, 0, 0)
+            cLabel Title = new cLabel("Shooters", Font.Title, 0, 0)
             {
                 ContentColor = new Color(54, 151, 168).Collection()
             };
-            pos = Title.GetCoordinates(ObjectsPanel.GetDimension, "xcenter top", 0, 130);
+            pos = Title.GetCoordinates(ObjectsPanel.GetDimension, "xcenter top", 0, (int)(pos.Y += 50));
             Title.SetPosition((int)pos.X, (int)pos.Y);
             ComponentManager.New(Title);
 
@@ -399,28 +441,28 @@ namespace SolarSystemDefense
                 InfoPopUp = null;
                 PopUpComponents.Clear();
             }
+            
+            // Place new shooter
+            if (SelectedObject.buildID >= 0)
+            {
+                SelectedObject.angle += (float)Control.MouseWheel / 5;
+                if (Control.MouseClicked && SelectedObject.allowBuild)
+                {
+                    AlignLabel("CASH", "CASH : $" + (Player.Cash -= SelectedObject.price));
+
+                    Vector2 Position = Control.MouseCoordinates;
+
+                    if (SelectedObject.isShooter)
+                        EntityManager.New(new Shooter(SelectedObject.buildID, Position, SelectedObject.angle));
+                    else
+                        EntityManager.New(new Feature(SelectedObject.buildID, Position, SelectedObject.angle));
+
+                    SelectedObject.buildID = -1;
+                }
+            }
 
             if (CurrentStage != RoundStage.Paused)
             {
-                // Place new shooter
-                if (SelectedObject.buildID >= 0)
-                {
-                    SelectedObject.angle += (float)Control.MouseWheel / 5;
-                    if (Control.MouseClicked && SelectedObject.allowBuild)
-                    {
-                        AlignLabel("CASH", "CASH : $" + (Player.Cash -= SelectedObject.price));
-
-                        Vector2 Position = Control.MouseCoordinates;
-
-                        if (SelectedObject.isShooter)
-                            EntityManager.New(new Shooter(SelectedObject.buildID, Position, SelectedObject.angle));
-                        else
-                            EntityManager.New(new Feature(SelectedObject.buildID, Position, SelectedObject.angle));
-
-                        SelectedObject.buildID = -1;
-                    }
-                }
-
                 // Update enemy position
                 foreach (Enemy e in EntityManager.Enemies.GetRange(0, EntityManager.Enemies.Count))
                     if (Math.Floor(Vector2.Distance(e.Position, StageMap.Walkpoints[e.LastWalkpoint])) <= e.Speed * 2)
@@ -437,11 +479,13 @@ namespace SolarSystemDefense
                             e.Visible = false;
                         }
                     }
-
-                EntityManager.Update();
-                EnemySpawner.Update();
             }
 
+            EntityManager.Update();
+
+            if (CurrentStage != RoundStage.Paused)
+                EnemySpawner.Update();
+            
             foreach (cBox c in AvailableObjects)
                 c.Update();
 
