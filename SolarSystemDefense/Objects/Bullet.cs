@@ -22,6 +22,8 @@ namespace SolarSystemDefense
             this.Velocity = Velocity;
 
             Angle = Velocity.Angle();
+
+            Sound.Shoot.Play(.15f, 0, 0);
         }
         public Bullet(Texture2D BulletSprite, Vector2 Position, Vector2 Velocity, float Damage = 0, float SpeedDamage = 0, bool CanRotate = false)
         {
@@ -42,7 +44,7 @@ namespace SolarSystemDefense
         public override void Update()
         {
             if (Velocity.LengthSquared() > 0 && CanRotate)
-                Angle += MathHelper.ToRadians(Maths.Random.Next(5, 10));
+                Angle += Velocity.Angle() / 300;
             Position += Velocity;
 
             if (!Main.GameBound.Contains(Position.ToPoint()))

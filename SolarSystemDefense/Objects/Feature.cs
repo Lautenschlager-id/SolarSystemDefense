@@ -50,12 +50,19 @@ namespace SolarSystemDefense
                 f.Angle += .008f;
                 f.Scale = Utils.ScaleBounce(f.TimeSinceSpawn += .005f, 10);
 
+                bool execute = false;
                 foreach (Enemy e in EntityManager.Enemies)
                 {
                     if (Maths.Pythagoras(e.Position, f.Position, f.ActionArea))
+                    {
                         e.Speed -= Maths.Percent(Data.FeatureData[f.Type].SpeedDamage, e.Speed);
+                        if (!execute)
+                            execute = true;
+                    }
                     e.Velocity = Maths.PolarToVector(e.Angle, e.Speed);
                 }
+                if (execute)
+                    Sound.BlackHole.Play(.01f, 0, 0);
             }));
         }
 

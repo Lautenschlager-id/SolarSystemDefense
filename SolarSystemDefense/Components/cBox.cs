@@ -81,6 +81,8 @@ namespace SolarSystemDefense
             label = new cLabel(Text, GetDimension, LabelFont);
 
             this.ToggleColorOnHover = ToggleColorOnHover;
+            HoverSound = Sound.MouseHover;
+            ClickSound = Sound.Click;
 
             base.SetPosition(XPosition, YPosition);
         }

@@ -37,6 +37,8 @@ namespace SolarSystemDefense
                 wGame.Instance.AlignLabel("SCORE", "SCORE : " + (wGame.Instance.Player.Score += Data.EnemyData[Type].Score));
                 wGame.Instance.AlignLabel("CASH", "CASH : $" + (wGame.Instance.Player.Cash += Data.EnemyData[Type].Cash));
                 Visible = false;
+
+                Sound.Explosion.Play(.5f, 0, 0);
             }
             else
             {
@@ -45,6 +47,8 @@ namespace SolarSystemDefense
 
                 DamageCooldown = 10;
                 ObjectColor = Color.LightPink * .85f;
+
+                Sound.Hit.Play(1f, 0, 0);
             }
         }
         

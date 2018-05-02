@@ -97,8 +97,9 @@ namespace SolarSystemDefense
         {
             Layer = new SpriteBatch(GraphicsDevice);
 
-            Graphic.LoadContent(Content);
             Font.LoadContent(Content);
+            Graphic.LoadContent(Content);
+            Sound.LoadContent(Content);
 
             SetStage();
         }

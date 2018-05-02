@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
@@ -11,6 +12,10 @@ namespace SolarSystemDefense
         public float LayerDepth = Info.LayerDepth["Middleground"];
         // [] = Not hover, Hover
         public Color[] ComponentColor = Color.White.Collection(), ContentColor = Color.White.Collection();
+
+        public SoundEffect ClickSound = null, HoverSound = null;
+
+        protected bool wasHovering = false;
 
         protected Texture2D Texture;
         protected Rectangle Shape, MouseShape;
@@ -36,15 +41,12 @@ namespace SolarSystemDefense
                 return new Vector2(Shape.X, Shape.Y);
             }
         }
-        public Vector2 GetSize
+        public Vector2 Size
         {
             get
             {
                 return new Vector2(Shape.Width, Shape.Height);
             }
-        }
-        public Vector2 SetSize
-        {
             set
             {
                 Shape.Width = (int)value.X;
@@ -108,9 +110,18 @@ namespace SolarSystemDefense
                 if (MouseHover)
                 {
                     OnHover?.Invoke(this, null);
+                    if (!wasHovering)
+                        HoverSound?.Play(.25f, 0, 0);
                     if (Control.MouseClicked)
+                    {
                         OnClick?.Invoke(this, null);
+                        ClickSound?.Play(.3f, 0, 0);
+                    }
+
+                    wasHovering = true;
                 }
+                else
+                    wasHovering = false;
 
                 OnUpdate?.Invoke(this, null);
             }

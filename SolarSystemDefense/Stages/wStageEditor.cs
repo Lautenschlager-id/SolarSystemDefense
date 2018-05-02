@@ -99,7 +99,7 @@ namespace SolarSystemDefense
             tutorial.SetPosition((int)Position.X, (int)Position.Y);
             ComponentManager.New(tutorial);
 
-            Main.GameBound = new Rectangle(0, 0, Main.ViewPort.Width - (int)ItemPanel.GetSize.X, Main.ViewPort.Height);
+            Main.GameBound = new Rectangle(0, 0, Main.ViewPort.Width - (int)ItemPanel.Size.X, Main.ViewPort.Height);
         }
 
         public void AlignLineCounter()
@@ -129,9 +129,13 @@ namespace SolarSystemDefense
                     int index = Level.Walkpoints.Count - 1;
                     if (index >= 0)
                         Level.Walkpoints.RemoveAt(index);
+                    Sound.Shift.Play(.2f, 0, 0);
                 }
                 else if (alter = (Control.MouseClicked && Level.Walkpoints.Count < 51))
+                {
                     Level.Walkpoints.Add(Vector2.Clamp(Control.MouseCoordinates, Vector2.Zero, new Vector2(Main.GameBound.Width, Main.GameBound.Height)));
+                    Sound.Place.Play(.2f, 0, 0);
+                }
                 if (alter)
                     AlignLineCounter();
             }

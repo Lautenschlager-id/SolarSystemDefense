@@ -73,6 +73,7 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="System\Sound.cs" />
     <Compile Include="System\Game\Background.cs" />
     <Compile Include="Components\cLabel.cs" />
     <Compile Include="Stages\wMenu.cs" />

@@ -84,7 +84,7 @@ namespace SolarSystemDefense
             ObjectsPanel.Alpha = .5f;
             ComponentManager.New(ObjectsPanel);
 
-            Main.GameBound = new Rectangle(0, 0, Main.ViewPort.Width - (int)ObjectsPanel.GetSize.X, Main.ViewPort.Height);
+            Main.GameBound = new Rectangle(0, 0, Main.ViewPort.Width - (int)ObjectsPanel.Size.X, Main.ViewPort.Height);
 
             cBox Pause = new cBox(Graphic.Pause, 0, 0)
             {
@@ -113,7 +113,10 @@ namespace SolarSystemDefense
             };
             Button.OnClick += new EventHandler((obj, arg) => {
                 if (CurrentStage != RoundStage.Paused)
+                {
                     Main.CurrentGameState = Main.GameState.Menu;
+                    Button.ClickSound = Sound.Click;
+                }
                 else
                 {
                     if (Button_FirstExe)
@@ -125,6 +128,8 @@ namespace SolarSystemDefense
 
                         pos = Button.GetCoordinates(ObjectsPanel.GetDimension, "right top", 0, 10);
                         Button.SetPosition((int)pos.X, (int)pos.Y);
+
+                        Button.ClickSound = Sound.Go;
                     }
                     CurrentStage = RoundStage.Running;
                 }
@@ -300,6 +305,8 @@ namespace SolarSystemDefense
             Button.OnClick += new EventHandler((obj, arg) => Main.CurrentGameState = Main.GameState.Menu);
             Button.SetPosition((int)Position.X, (int)Position.Y + 25);
             cGameOver.Add(Button);
+
+            Sound.GameOver.Play(.8f, 0, 0);
         }
 
         private void eventSelectedObject(object obj, EventArgs arg)
@@ -324,7 +331,11 @@ namespace SolarSystemDefense
                 else
                     SelectedObject.actionArea = null;
                 SelectedObject.allowBuild = true;
+
+                Sound.Select.Play(.4f, 0, 0);
             }
+            else
+                Sound.Shift.Play(.4f, 0, 0);
         }
         public void eventHoveredObject(object obj, EventArgs arg)
         {
@@ -384,7 +395,7 @@ namespace SolarSystemDefense
         private void CreateInfoPopUp(cBox obj)
         {
             Vector2 Position = Control.MouseCoordinates;
-            Vector2 Size = ObjectsPanel.GetPosition + ObjectsPanel.GetSize;
+            Vector2 Size = ObjectsPanel.GetPosition + ObjectsPanel.Size;
             Position = Vector2.Clamp(new Vector2(Position.X - 100 / 2f, Position.Y - 110), ObjectsPanel.GetPosition, new Vector2(Size.X - 100, Size.Y - 110));
 
             InfoPopUp = new cBox("INFO", Font.PopUpTitle, (int)Position.X, (int)Position.Y, 100, 110, false)
@@ -394,7 +405,7 @@ namespace SolarSystemDefense
                 Alpha = .7f
             };
             InfoPopUp.SetLabelPosition("xcenter top");
-            Vector2 NewSize = InfoPopUp.GetSize;
+            Vector2 NewSize = InfoPopUp.Size;
 
             Component component;
 
@@ -491,7 +502,7 @@ namespace SolarSystemDefense
                 PopUpComponents.Add(component as Component);
             }
 
-            InfoPopUp.SetSize = NewSize;
+            InfoPopUp.Size = NewSize;
         }
 
         public override void Update()
@@ -519,6 +530,8 @@ namespace SolarSystemDefense
                             EntityManager.New(new Feature(SelectedObject.buildID, Position, SelectedObject.angle));
 
                         SelectedObject.buildID = -1;
+
+                        Sound.Place.Play(.4f, 0, 0);
                     }
                 }
 
@@ -540,8 +553,10 @@ namespace SolarSystemDefense
                                 if ((Player.Life -= e.Damage) <= 0)
                                 {
                                     GameOver();
-                                    stop = true;                                   
+                                    stop = true;
                                 }
+                                else
+                                    Sound.EarthDamage.Play(.15f, 0, 0);
 
                                 AlignLabel("LIFE", "LIFE : " + Math.Ceiling(Player.Life));
                                 e.Visible = false;
@@ -591,23 +606,34 @@ namespace SolarSystemDefense
 
                             updated = true;
 
-                            string Text = "SELL ($60%)";
-                            Vector2 Size = Font.MenuText.MeasureString(Text) + Font.Margin * 2 * Vector2.One;
-                            Vector2 Position = Vector2.Clamp(e.Position - Size / 2f, Vector2.Zero, new Vector2(Main.GameBound.Width - Size.X, Main.GameBound.Height - Size.Y));
-                            cBox SellButton = new cBox(Text, Font.MenuText, (int)Position.X, (int)Position.Y + (Position.Y > 100 ? -30 : 30), (int)Size.X, (int)Size.Y, true)
+                            cBox SellButton;
+                            if (isShooter == 1)
                             {
-                                ID = isShooter,
-                                ComponentColor = Info.Colors["Button"],
-                                TextColor = Info.Colors["ButtonText"],
-                                Alpha = .5f
-                            };
-                            SellButton.OnClick += Sell;
+                                string Text = "SELL ($60%)";
+                                Vector2 Size = Font.MenuText.MeasureString(Text) + Font.Margin * 2 * Vector2.One;
+                                Vector2 Position = Vector2.Clamp(e.Position - Size / 2f, Vector2.Zero, new Vector2(Main.GameBound.Width - Size.X, Main.GameBound.Height - Size.Y));
+                                SellButton = new cBox(Text, Font.MenuText, (int)Position.X, (int)Position.Y + (Position.Y > 100 ? -30 : 30), (int)Size.X, (int)Size.Y, true)
+                                {
+                                    ID = isShooter,
+                                    ComponentColor = Info.Colors["Button"],
+                                    TextColor = Info.Colors["ButtonText"],
+                                    Alpha = .5f,
+                                    ClickSound = Sound.Shift,
+                                    HoverSound = null
+                                };
+                                SellButton.OnClick += Sell;
+                            }
+                            else
+                                SellButton = new cBox(0, 0)
+                                {
+                                    Visible = false
+                                };
 
                             WatchObject = new object[]
                             {
-                            SellButton,
-                            Utils.CreateCircle(ActionArea),
-                            e
+                                SellButton,
+                                Utils.CreateCircle(ActionArea),
+                                e
                             };
                             break;
                         }
