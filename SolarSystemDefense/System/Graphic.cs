@@ -60,7 +60,7 @@ namespace SolarSystemDefense
             InfoTimer = content.Load<Texture2D>("Graphic/UI/popup_timer");
             InfoSpeed = content.Load<Texture2D>("Graphic/UI/popup_speed");
 
-            Presentation = Enumerable.Range(1, 1).Select(id => content.Load<Texture2D>("Graphic/Presentation/" + (id - 1))).ToArray();
+            Presentation = Enumerable.Range(1, 2).Select(id => content.Load<Texture2D>("Graphic/Presentation/" + (id - 1))).ToArray();
 
             Help = Enumerable.Range(1, 2).Select(id => content.Load<Texture2D>("Graphic/Help/" + (id - 1))).ToArray();
 

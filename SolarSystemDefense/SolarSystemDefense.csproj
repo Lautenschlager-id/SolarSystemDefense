@@ -16,7 +16,8 @@
     <XnaCrossPlatformGroupID>9c06206e-43c3-4b0f-bd4e-b898d7acd6f6</XnaCrossPlatformGroupID>
     <XnaOutputType>Game</XnaOutputType>
     <ApplicationIcon>Game.ico</ApplicationIcon>
-    <Thumbnail>GameThumbnail.png</Thumbnail>
+    <Thumbnail>
+    </Thumbnail>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -106,9 +107,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
-    <Content Include="GameThumbnail.png">
-      <XnaPlatformSpecific>true</XnaPlatformSpecific>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SolarSystemDefenseContent\SolarSystemDefenseContent.contentproj">
