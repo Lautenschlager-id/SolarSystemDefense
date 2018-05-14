@@ -1,6 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.IO;
+using System.Runtime.Serialization.Json;
+using System.Text;
 
 namespace SolarSystemDefense
 {
@@ -129,6 +132,31 @@ namespace SolarSystemDefense
         public static float ScaleBounce(float TimeSrc, int scale = 5)
         {
             return 1 + (float)Math.Sin(scale * TimeSrc) * .1f;
+        }
+
+        // Data
+        public static byte[] toJSON(Type type, object obj)
+        {
+            MemoryStream memory = new MemoryStream();
+
+            DataContractJsonSerializer serializer = new DataContractJsonSerializer(type);
+            serializer.WriteObject(memory, obj);
+
+            byte[] JSON = memory.ToArray();
+            memory.Close();
+
+            return JSON;
+        }
+        public static object fromJSON(Type type, string content)
+        {
+            MemoryStream memory = new MemoryStream(Encoding.UTF8.GetBytes(content));
+
+            DataContractJsonSerializer serializer = new DataContractJsonSerializer(type);
+            object obj = serializer.ReadObject(memory);
+
+            memory.Close();
+
+            return obj;
         }
     }
 }

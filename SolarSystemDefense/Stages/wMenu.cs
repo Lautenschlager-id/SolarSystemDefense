@@ -1,11 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 
 namespace SolarSystemDefense
 {
-    class wMenu : GameStage
+    class wMenu : GameWindow
     {
         public wMenu()
         {
@@ -13,7 +12,7 @@ namespace SolarSystemDefense
 
             List<List<object>> ButtonTexts = new List<List<object>>() {
                 new List<object> { "Play", new EventHandler((obj, arg) => Main.CurrentGameState = Main.GameState.Playing) },
-                new List<object> { "Stage Editor", new EventHandler((obj, arg) => Main.CurrentGameState = Main.GameState.StageEditor) },
+                new List<object> { "Map Editor", new EventHandler((obj, arg) => Main.CurrentGameState = Main.GameState.MapEditor) },
                 new List<object> { "Help", new EventHandler((obj, arg) => Main.CurrentGameState = Main.GameState.Help) },
                 new List<object> { "Exit", new EventHandler((obj, arg) => Main.Instance.Exit()) },
             };

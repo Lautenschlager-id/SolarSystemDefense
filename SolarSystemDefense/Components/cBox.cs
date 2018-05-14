@@ -12,6 +12,7 @@ namespace SolarSystemDefense
         public Texture2D GetContent { get; private set; }
         public Vector2 ContentRadius { get; private set; }
         public Vector2 ContentPosition { get; private set; }
+        public Rectangle? ContentSourceRectangle;
         public string SourceText
         {
             get
@@ -137,7 +138,7 @@ namespace SolarSystemDefense
             {
                 Layer.Draw(Texture, Shape, null, ComponentColor[(ToggleColorOnHover && MouseHover) ? 1 : 0] * Alpha, 0, Vector2.Zero, SpriteEffects.None, LayerDepth);
                 if (HasContent)
-                    Layer.Draw(GetContent, ContentPosition, null, ContentColor[(ToggleColorOnHover && MouseHover) ? 1 : 0] * Alpha, 0, ContentRadius, 1f, 0, LayerDepth);
+                    Layer.Draw(GetContent, ContentPosition, ContentSourceRectangle, ContentColor[(ToggleColorOnHover && MouseHover) ? 1 : 0] * Alpha, 0, ContentRadius, 1f, 0, LayerDepth);
                 label?.Draw(Layer);
             }
         }

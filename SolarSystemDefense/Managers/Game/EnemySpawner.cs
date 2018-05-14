@@ -14,7 +14,7 @@ namespace SolarSystemDefense
             public int ID { get; private set; }
             public float TotalEnemy4Queue;
 
-            public int stdSpawnCooldown = 8;
+            public int stdSpawnCooldown = 10;
             public float stdTotalEnemy4Queue;
 
             public int SpawnCooldown;
@@ -52,14 +52,14 @@ namespace SolarSystemDefense
         {
             SpawnData.Clear();
 
-            SpawnData.Add(new Spawn(ID: 0, TotalEnemy4Queue: 8));
+            SpawnData.Add(new Spawn(ID: 0, TotalEnemy4Queue: 10));
             SpawnData.Add(new Spawn(ID: 1, TotalEnemy4Queue: 13));
-            SpawnData.Add(new Spawn(ID: 2, TotalEnemy4Queue: 10));
+            SpawnData.Add(new Spawn(ID: 2, TotalEnemy4Queue: 8));
             SpawnData.Add(new Spawn(ID: 3, TotalEnemy4Queue: 1));
 
             CurrentQueuePosition = 0;
-            Queue = new int[] { 0, 0, 0, 1, 0, 1, 0, 2, 0, 0, 3 };
-            TransitionTime = 10;
+            Queue = new int[] { 0, 0, 0, 1, 0, 1, 2, 0, 3, 1, 0, 1, 0, 2, 1, 3, 1, 3 };
+            TransitionTime = 20;
         }
 
         static EnemySpawner()

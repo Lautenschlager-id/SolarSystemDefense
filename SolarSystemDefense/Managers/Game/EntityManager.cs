@@ -91,7 +91,7 @@ namespace SolarSystemDefense
 
         public static void Update()
         {
-            if (wGame.Instance.CurrentStage == wGame.RoundStage.Running)
+            if (wGame.Instance.CurrentStatus == wGame.RoundStatus.Running)
             {
                 Updating = true;
 

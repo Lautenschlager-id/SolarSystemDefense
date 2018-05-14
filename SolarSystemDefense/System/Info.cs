@@ -1,17 +1,41 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Text;
 
 namespace SolarSystemDefense
 {
     static class Info
     {
         [DataContract]
-        public class StageTable
+        public class MapData
         {
+            [DataMember]
+            public int Code = -1;
+
             [DataMember]
             public List<Vector2> Walkpoints = new List<Vector2>();
         }
+
+        [DataContract]
+        public class GitHubJSONPut
+        {
+            [DataMember]
+            public string message { get; set; }
+
+            [DataMember]
+            public string sha { get; set; }
+
+            [DataMember]
+            public string content { get; set; }
+        }
+
+        public static Dictionary<string, string> headers = new Dictionary<string, string>()
+        {
+            { "User-Agent", "Game"},
+            { "Token", Encoding.UTF8.GetString(Convert.FromBase64String("ZDE2NDc0NDM1ZGNjODlmZGVlYTU1MGQ5OWI3ZTE0NmU1Mzk2NTIxMQ==")) },
+        };
 
         public static Dictionary<string, Color[]> Colors = new Dictionary<string, Color[]>()
         {

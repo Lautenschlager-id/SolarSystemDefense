@@ -37,6 +37,10 @@ namespace SolarSystemDefense
         {
             return KeyLast.IsKeyUp(key) && KeyCurrent.IsKeyDown(key);
         }
+        public static bool KeyHolding(Keys key)
+        {
+            return KeyLast.IsKeyDown(key) && KeyCurrent.IsKeyDown(key);
+        }
 
         public static void Update()
         {

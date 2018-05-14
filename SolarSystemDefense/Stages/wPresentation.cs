@@ -4,7 +4,7 @@ using System;
 
 namespace SolarSystemDefense
 {
-    class wPresentation : GameStage
+    class wPresentation : GameWindow
     {
         const float tUpdate = .02f;
         const int GoNext = 6;

@@ -4,7 +4,7 @@ using System;
 
 namespace SolarSystemDefense
 {
-    class wHelp : GameStage
+    class wHelp : GameWindow
     {
         int _image = 0;
         int Image {

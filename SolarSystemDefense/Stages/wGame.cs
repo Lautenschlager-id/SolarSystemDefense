@@ -1,14 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Runtime.Serialization.Json;
-using System.Text;
 
 namespace SolarSystemDefense
 {
-    class wGame : GameStage
+    class wGame : GameWindow
     {
         public static wGame Instance { get; private set; }
 
@@ -19,15 +17,15 @@ namespace SolarSystemDefense
             Cash = 150
         };
 
-        public enum RoundStage
+        public enum RoundStatus
         {
             Running,
             Paused,
             GameOver
         }
-        public RoundStage CurrentStage = RoundStage.Paused;
+        public RoundStatus CurrentStatus = RoundStatus.Paused;
 
-        public Info.StageTable StageMap = new Info.StageTable();
+        public Info.MapData Map = new Info.MapData();
 
         /* ID
          Shooter = 0 - 99
@@ -49,6 +47,25 @@ namespace SolarSystemDefense
             allowBuild = false,
             price = 0,
         };
+        
+        class MapObject
+        {
+            public Texture2D texture;
+            public Vector2 position { get; private set; }
+            public Vector2 origin { get; private set; }
+            public float angle { get; private set; }
+            public float radius { get; private set; }
+
+            public MapObject(Texture2D texture, int iniIndex, int finalIndex)
+            {
+                this.texture = texture;
+                position = Instance.Map.Walkpoints[iniIndex];
+                origin = texture.Center();
+                angle = Instance.Map.Walkpoints[iniIndex].Angle(Instance.Map.Walkpoints[finalIndex]) + MathHelper.PiOver2;
+                radius = texture.Width / 2f;
+            }
+        }
+        List<MapObject> mapObjects = new List<MapObject>();
 
         object[] WatchObject;
 
@@ -57,20 +74,26 @@ namespace SolarSystemDefense
         cBox ObjectsPanel, InfoPopUp;
         List<Component> PopUpComponents = new List<Component>();
 
-        int EarthID = 0;
         cLabel PlayerLife, PlayerCash, PlayerScore;
         cLabel item_price; // visibility
-        public wGame()
+        public wGame(object map = null)
         {
             Instance = this;
 
             Main.Resize(900, 600);
 
-            LoadStage();
-            EnemySpawner.SetInitialPosition(StageMap.Walkpoints[0]);
+            if (map == null)
+                LoadMap();
+            else
+            {
+                Player.Cash = 9999;
+                Player.Life = 500;
+                LoadMap(map);
+            }
+
+            EnemySpawner.SetInitialPosition(Map.Walkpoints[0]);
             EnemySpawner.Reset();
             Data.Level = 1;
-            EarthID = 0;
 
             ObjectsPanel = new cBox(Main.ViewPort.Width - 180, 0, 180, Main.ViewPort.Height)
             {
@@ -86,23 +109,27 @@ namespace SolarSystemDefense
 
             Main.GameBound = new Rectangle(0, 0, Main.ViewPort.Width - (int)ObjectsPanel.Size.X, Main.ViewPort.Height);
 
-            cBox Pause = new cBox(Graphic.Pause, 0, 0)
+            cBox ToggleGameState = new cBox(Graphic.GameState, 0, 0)
             {
                 Visible = false,
                 ComponentColor = Color.Transparent.Collection()
             };
-            Pause.OnClick += new EventHandler((obj, arg) => {
-                if (CurrentStage != RoundStage.GameOver)
+            ToggleGameState.ContentSourceRectangle = new Rectangle(0, 0, 34, 40);
+            ToggleGameState.OnClick += new EventHandler((obj, arg) => {
+                if (CurrentStatus != RoundStatus.GameOver)
                 {
-                    if (CurrentStage == RoundStage.Paused)
-                        CurrentStage = RoundStage.Running;
+                    if (CurrentStatus == RoundStatus.Paused)
+                        CurrentStatus = RoundStatus.Running;
                     else
-                        CurrentStage = RoundStage.Paused;
+                        CurrentStatus = RoundStatus.Paused;
+
+                    int i = CurrentStatus == RoundStatus.Paused ? 1 : 0;
+                    (obj as cBox).ContentSourceRectangle = new Rectangle(i * 34, 0, 34, 40);
                 }
             });
-            Vector2 pos = Pause.GetCoordinates(ObjectsPanel.GetDimension, "left top");
-            Pause.SetPosition((int)pos.X, (int)pos.Y);
-            ComponentManager.New(Pause);
+            Vector2 pos = ToggleGameState.GetCoordinates(ObjectsPanel.GetDimension, "left top", 15);
+            ToggleGameState.SetPosition((int)pos.X, (int)pos.Y);
+            ComponentManager.New(ToggleGameState);
 
             bool Button_FirstExe = true;
             cBox Button = new cBox("Start!", Font.Text, 0, 0, 125, 30, true)
@@ -112,9 +139,11 @@ namespace SolarSystemDefense
                 Alpha = .5f
             };
             Button.OnClick += new EventHandler((obj, arg) => {
-                if (CurrentStage != RoundStage.Paused)
+                if (CurrentStatus != RoundStatus.Paused)
                 {
-                    Main.CurrentGameState = Main.GameState.Menu;
+                    if (map != null)
+                        Main.GameStateParameter = Map;
+                    Main.CurrentGameState = map == null ? Main.GameState.Menu : Main.GameState.MapEditor;
                     Button.ClickSound = Sound.Click;
                 }
                 else
@@ -123,15 +152,15 @@ namespace SolarSystemDefense
                     {
                         Button_FirstExe = false;
 
-                        Button.SourceText = "Leave";
-                        Pause.Visible = true;
+                        Button.SourceText = map == null ? "Leave" : "Back";
+                        ToggleGameState.Visible = true;
 
                         pos = Button.GetCoordinates(ObjectsPanel.GetDimension, "right top", 0, 10);
                         Button.SetPosition((int)pos.X, (int)pos.Y);
 
                         Button.ClickSound = Sound.Go;
                     }
-                    CurrentStage = RoundStage.Running;
+                    CurrentStatus = RoundStatus.Running;
                 }
             });
             pos = Button.GetCoordinates(ObjectsPanel.GetDimension, "xcenter top", 0, 10);
@@ -218,6 +247,12 @@ namespace SolarSystemDefense
                 };
                 item_square.OnClick += eventSelectedObject;
                 item_square.OnHover += eventHoveredObject;
+                item_square.OnUpdate += new EventHandler((obj, arg) => {
+                    cBox o = (obj as cBox);
+                    foreach (Feature f in EntityManager.Features)
+                        if (f.Type == o.ID - 100)
+                            o.ContentColor = Color.Gray.Collection();
+                });
 
                 AvailableObjects.Add(item_square);
 
@@ -235,37 +270,43 @@ namespace SolarSystemDefense
                     ID = item_square.ID
                 };
                 item_price.OnUpdate += UpdatePriceColor;
+                item_price.OnUpdate += new EventHandler((obj, arg) => {
+                    cLabel o = (obj as cLabel);
+                    foreach (Feature f in EntityManager.Features)
+                        if (f.Type == o.ID - 100)
+                            o.Remove = true;
+                });
                 pos = item_price.GetCoordinates(item_square.GetDimension, "xcenter", 0, (int)(pos.Y + 15));
                 item_price.SetPosition((int)pos.X, (int)pos.Y);
                 ComponentManager.New(item_price);
             }
         }
 
-        private void LoadStage()
+        private void LoadMap(object map = null)
         {
+            if (map == null)
+                Map = Data.OfficialMaps[Maths.Random.Next(0, Data.OfficialMaps.Count)];
+            else
+                Map = (Info.MapData)map;
 
-            string LoadedStage = Data.OfficialStages[Maths.Random.Next(0, Data.OfficialStages.Count - 1)];
-
-            MemoryStream memory = new MemoryStream(Encoding.UTF8.GetBytes(LoadedStage));
-
-            DataContractJsonSerializer serializer = new DataContractJsonSerializer(StageMap.GetType());
-            StageMap = serializer.ReadObject(memory) as Info.StageTable;
-
-            memory.Close();
+            // Earth
+            mapObjects.Add(new MapObject(Graphic.Earth[0], Map.Walkpoints.Count - 1, Map.Walkpoints.Count - 2));
+            // UFO
+            mapObjects.Add(new MapObject(Graphic.UFO, 0, 1));
         }
 
         List<cBox> Curtains = new List<cBox>();
         List<Component> cGameOver = new List<Component>();
         private void GameOver()
         {
-            CurrentStage = RoundStage.GameOver;
+            CurrentStatus = RoundStatus.GameOver;
             Player.Life = 0;
 
             EntityManager.Clear();
             WatchObject = null;
             SelectedObject.buildID = -1;
 
-            EarthID++;
+            mapObjects[0].texture = Graphic.Earth[1];
 
             cBox Curtain = new cBox(0, -Main.ViewPort.Bounds.Height / 2, Main.ViewPort.Bounds.Width, Main.ViewPort.Bounds.Height / 2)
             {
@@ -364,9 +405,9 @@ namespace SolarSystemDefense
             }
         }
 
-        private void UpdatePriceColor(object sender, EventArgs e)
+        private void UpdatePriceColor(object obj, EventArgs arg)
         {
-            cLabel item_price = sender as cLabel;
+            cLabel item_price = obj as cLabel;
             int id = item_price.ID;
             int price = id < 100 ? Data.ShooterData[id].Price : Data.FeatureData[id - 100].Price;
             item_price.ContentColor = ((Player.Cash >= price) ? Color.LimeGreen : Color.Red).Collection();
@@ -505,6 +546,27 @@ namespace SolarSystemDefense
             InfoPopUp.Size = NewSize;
         }
 
+        private bool OnLineCollision(Vector2 a, Vector2 b, Vector2 c, float radius)
+        {
+            float angleAB = b.Angle(a);
+
+            Vector2 subCA = c - a, subBA = b - a;
+
+            float distAC = Vector2.Distance(c, a);
+            float distAB = Vector2.Distance(b, a);
+
+            float sin = (float)Math.Sin(angleAB), cos = (float)Math.Cos(angleAB);
+
+            Vector2 d = new Vector2(distAC * cos + a.X, distAC * sin + a.Y);
+
+            float distAD = Vector2.Distance(d, a);
+            if (distAC > distAB) return false;
+
+            float distCD = Vector2.Distance(c, d);
+
+            return (radius + Data.LineRadius) >= distCD;
+        }
+
         public override void Update()
         {
             if (InfoPopUp != null)
@@ -512,7 +574,7 @@ namespace SolarSystemDefense
                 InfoPopUp = null;
                 PopUpComponents.Clear();
             }
-            if (CurrentStage != RoundStage.GameOver)
+            if (CurrentStatus != RoundStatus.GameOver)
             {
                 // Place new shooter
                 if (SelectedObject.buildID >= 0)
@@ -529,23 +591,23 @@ namespace SolarSystemDefense
                         else
                             EntityManager.New(new Feature(SelectedObject.buildID, Position, SelectedObject.angle));
 
-                        SelectedObject.buildID = -1;
-
+                        if (!((Control.KeyHolding(Keys.LeftShift) || Control.KeyHolding(Keys.RightShift)) && Player.Cash >= SelectedObject.price))
+                            SelectedObject.buildID = -1;
                         Sound.Place.Play(.4f, 0, 0);
                     }
                 }
 
-                if (CurrentStage == RoundStage.Running)
+                if (CurrentStatus == RoundStatus.Running)
                 {
                     // Update enemy position
                     foreach (Enemy e in EntityManager.Enemies.GetRange(0, EntityManager.Enemies.Count))
-                        if (Math.Floor(Vector2.Distance(e.Position, StageMap.Walkpoints[e.LastWalkpoint])) <= e.Speed * 2)
+                        if (Math.Floor(Vector2.Distance(e.Position, Map.Walkpoints[e.LastWalkpoint])) <= e.Speed * 2)
                         {
                             int index = e.LastWalkpoint + 1;
-                            if (index < StageMap.Walkpoints.Count)
+                            if (index < Map.Walkpoints.Count)
                             {
                                 e.LastWalkpoint = index;
-                                e.SetVelocity(StageMap.Walkpoints[index]);
+                                e.SetVelocity(Map.Walkpoints[index]);
                             }
                             else
                             {
@@ -569,7 +631,7 @@ namespace SolarSystemDefense
 
                 EntityManager.Update();
 
-                if (CurrentStage == RoundStage.Running)
+                if (CurrentStatus == RoundStatus.Running)
                     EnemySpawner.Update();
 
                 foreach (cBox c in AvailableObjects)
@@ -646,9 +708,16 @@ namespace SolarSystemDefense
                 if (SelectedObject.buildID >= 0)
                 {
                     Rectangle Bounds = Main.GameBound;
-                    float Radius = Data.ShooterData[SelectedObject.buildID].CollisionRadius;
+
+                    float Radius;
+                    if (SelectedObject.isShooter)
+                        Radius = Data.ShooterData[SelectedObject.buildID].CollisionRadius;
+                    else
+                        Radius = Data.FeatureData[SelectedObject.buildID].CollisionRadius;
+
                     Bounds.Inflate(-(int)Radius, -(int)Radius);
                     if (SelectedObject.allowBuild = Bounds.Contains(Control.MouseCoordinates.ToPoint()))
+                    {
                         foreach (Entity e in EntityManager.Entities)
                         {
                             float CollisionRadius;
@@ -662,6 +731,17 @@ namespace SolarSystemDefense
                             if (!(SelectedObject.allowBuild = !Maths.Pythagoras(Control.MouseCoordinates, e.Position, CollisionRadius + Radius)))
                                 break;
                         }
+
+                        if (SelectedObject.allowBuild)
+                            foreach (MapObject o in mapObjects)
+                                if (!(SelectedObject.allowBuild = !Maths.Pythagoras(Control.MouseCoordinates, o.position, o.radius + Radius)))
+                                    break;
+
+                        if (SelectedObject.allowBuild)
+                            for (int w = 0; w < Map.Walkpoints.Count - 1; w++)
+                                if (!(SelectedObject.allowBuild = !OnLineCollision(Map.Walkpoints[w], Map.Walkpoints[w + 1], Control.MouseCoordinates, Radius)))
+                                    break;
+                    }
                 }
             }
             if (Curtains.Count > 0)
@@ -681,8 +761,8 @@ namespace SolarSystemDefense
             foreach (cBox c in AvailableObjects)
                 c.Draw(Layer);
 
-            for (int p = 0; p < StageMap.Walkpoints.Count - 1; p++)
-                new Utils.Line(StageMap.Walkpoints[p + 1], StageMap.Walkpoints[p], 2, Color.FloralWhite, .4f).Draw(Layer);
+            for (int p = 0; p < Map.Walkpoints.Count - 1; p++)
+                new Utils.Line(Map.Walkpoints[p + 1], Map.Walkpoints[p], 2, Color.FloralWhite, .4f).Draw(Layer);
 
             EntityManager.Draw(Layer);
 
@@ -694,9 +774,8 @@ namespace SolarSystemDefense
                 Layer.Draw(sprite, Control.MouseCoordinates, null, (SelectedObject.allowBuild ? Color.White : Color.Red) * .6f, SelectedObject.angle, sprite.Center(), 1f, SpriteEffects.None, 0f);
             }
 
-            int LastWalkpoint = StageMap.Walkpoints.Count - 1;
-            Layer.Draw(Graphic.Earth[EarthID], StageMap.Walkpoints[LastWalkpoint], null, Color.White, StageMap.Walkpoints[LastWalkpoint].Angle(StageMap.Walkpoints[LastWalkpoint - 1]) + MathHelper.PiOver2, Graphic.Earth[EarthID].Center(), 1f, SpriteEffects.None, 1f);
-            Layer.Draw(Graphic.UFO, StageMap.Walkpoints[0], null, Color.White, StageMap.Walkpoints[0].Angle(StageMap.Walkpoints[1]) + MathHelper.PiOver2, Graphic.UFO.Center(), 1f, SpriteEffects.None, 1f);
+            foreach (MapObject o in mapObjects)
+                Layer.Draw(o.texture, o.position, null, Color.White, o.angle, o.origin, 1f, SpriteEffects.None, 1f);
 
             if (WatchObject != null)
             {

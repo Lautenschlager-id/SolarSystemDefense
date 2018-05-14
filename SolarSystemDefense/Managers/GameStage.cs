@@ -2,7 +2,7 @@
 
 namespace SolarSystemDefense
 {
-    abstract class GameStage
+    abstract class GameWindow
     {
         public virtual void Update() { }
         public virtual void Draw(SpriteBatch Layer) { }

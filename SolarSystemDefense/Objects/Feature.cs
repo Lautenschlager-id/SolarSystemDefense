@@ -22,13 +22,13 @@ namespace SolarSystemDefense
 
                 if (--f.Timer <= 0)
                 {
-                    int index = wGame.Instance.StageMap.Walkpoints.Count - 1;
+                    int index = wGame.Instance.Map.Walkpoints.Count - 1;
                     foreach (Enemy e in EntityManager.Enemies)
                         if (e.LastWalkpoint >= index)
                         {
                             f.Timer = Data.FeatureData[f.Type].defaultCooldown;
 
-                            Vector2 direction = wGame.Instance.StageMap.Walkpoints[index - 1] - wGame.Instance.StageMap.Walkpoints[index];
+                            Vector2 direction = wGame.Instance.Map.Walkpoints[index - 1] - wGame.Instance.Map.Walkpoints[index];
 
                             float Angle = direction.Angle();
                             Vector2 Velocity = Maths.PolarToVector(Angle, f.Speed);
@@ -36,7 +36,7 @@ namespace SolarSystemDefense
                             Quaternion EulerAim = Quaternion.CreateFromYawPitchRoll(0, 0, Angle);
                             Vector2 ShootDistance = Vector2.Transform(new Vector2(30, 0), EulerAim);
 
-                            EntityManager.New(new Bullet(Graphic.Water, wGame.Instance.StageMap.Walkpoints[index] + ShootDistance, Velocity, 0, 50));
+                            EntityManager.New(new Bullet(Graphic.Water, wGame.Instance.Map.Walkpoints[index] + ShootDistance, Velocity, 0, 50));
                             return;
                         }
                 }
@@ -62,7 +62,7 @@ namespace SolarSystemDefense
                     e.Velocity = Maths.PolarToVector(e.Angle, e.Speed);
                 }
                 if (execute)
-                    Sound.BlackHole.Play(.01f, 0, 0);
+                    Sound.BlackHole.Play(.05f, 0, 0);
             }));
         }
 
