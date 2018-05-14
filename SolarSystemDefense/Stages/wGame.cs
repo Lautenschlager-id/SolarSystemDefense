@@ -546,25 +546,25 @@ namespace SolarSystemDefense
             InfoPopUp.Size = NewSize;
         }
 
-        private bool OnLineCollision(Vector2 a, Vector2 b, Vector2 c, float radius)
+        private bool OnLineCollision(Vector2 Walkpoint1, Vector2 Walkpoint2, Vector2 PointPos, float PointRadius)
         {
-            float angleAB = b.Angle(a);
+            float angleAB = Walkpoint2.Angle(Walkpoint1);
 
-            Vector2 subCA = c - a, subBA = b - a;
+            Vector2 subCA = PointPos - Walkpoint1, subBA = Walkpoint2 - Walkpoint1;
 
-            float distAC = Vector2.Distance(c, a);
-            float distAB = Vector2.Distance(b, a);
+            float distAC = Vector2.Distance(PointPos, Walkpoint1);
+            float distAB = Vector2.Distance(Walkpoint2, Walkpoint1);
 
             float sin = (float)Math.Sin(angleAB), cos = (float)Math.Cos(angleAB);
 
-            Vector2 d = new Vector2(distAC * cos + a.X, distAC * sin + a.Y);
+            Vector2 d = new Vector2(distAC * cos + Walkpoint1.X, distAC * sin + Walkpoint1.Y);
 
-            float distAD = Vector2.Distance(d, a);
+            float distAD = Vector2.Distance(d, Walkpoint1);
             if (distAC > distAB) return false;
 
-            float distCD = Vector2.Distance(c, d);
+            float distCD = Vector2.Distance(PointPos, d);
 
-            return (radius + Data.LineRadius) >= distCD;
+            return PointRadius >= distCD;
         }
 
         public override void Update()

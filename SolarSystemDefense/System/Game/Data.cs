@@ -5,7 +5,6 @@ namespace SolarSystemDefense
     static class Data
     {
         public static float Level = 1;
-        public static int LineRadius = 10;
 
         public static List<Info.MapData> OfficialMaps = new List<Info.MapData>();
 
