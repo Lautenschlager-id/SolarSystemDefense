@@ -11,9 +11,6 @@ namespace SolarSystemDefense
         static HttpClient client = new HttpClient();
         static Internet()
         {
-            if (System.Diagnostics.Debugger.IsAttached)
-                System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");
-
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
         }
 
