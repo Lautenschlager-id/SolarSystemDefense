@@ -44,8 +44,8 @@ namespace SolarSystemDefense
             {
                 0, new ShooterInfo(
                     Name: "Mercury",
-                    Price: 20,
-                    Damage: 1.5f,
+                    Price: 0,
+                    Damage: 1000,
                     Cooldown: 30,
                     ActionArea: 80,
                     Speed: 7.5f
@@ -55,8 +55,8 @@ namespace SolarSystemDefense
             {
                 1, new ShooterInfo(
                     Name: "Venus",
-                    Price: 120,
-                    Damage: 3.75f,
+                    Price: 0,
+                    Damage: 1000,
                     Cooldown: 65,
                     ActionArea: 150,
                     Speed: 5
@@ -66,8 +66,8 @@ namespace SolarSystemDefense
             {
                 2, new ShooterInfo(
                     Name: "Mars",
-                    Price: 70,
-                    Damage: 2.3f,
+                    Price: 0,
+                    Damage: 1000,
                     Cooldown: 50,
                     ActionArea: 110,
                     Speed: 4f,
@@ -78,8 +78,8 @@ namespace SolarSystemDefense
             {
                 3, new ShooterInfo(
                     Name: "Jupiter",
-                    Price: 300,
-                    Damage: 10,
+                    Price: 0,
+                    Damage: 10000,
                     Cooldown: 100,
                     ActionArea: 250,
                     Speed: 3.3f,
@@ -110,41 +110,41 @@ namespace SolarSystemDefense
         public static Dictionary<int, EnemyInfo> EnemyData = new Dictionary<int, EnemyInfo>() {
             {
                 0, new EnemyInfo(
-                    Life: 5,
-                    Score: 10,
-                    Cash: 5,
-                    Damage: 2.5f,
-                    Speed: 1.3f
+                    Life: 1,
+                    Score: 10000000,
+                    Cash: 500000,
+                    Damage: 0,
+                    Speed: 0
                 )
             },
 
             {
                 1, new EnemyInfo(
-                    Life: 10,
-                    Score: 60,
-                    Cash: 15,
-                    Damage: 8,
-                    Speed: 3
+                    Life: 1,
+                    Score: 6000000,
+                    Cash: 1000000,
+                    Damage: 0,
+                    Speed: 0
                 )
             },
 
             {
                 2, new EnemyInfo(
-                    Life: 20,
-                    Score: 120,
-                    Cash: 20,
-                    Damage: 10,
-                    Speed: 5.2f
+                    Life: 1,
+                    Score: 120000000,
+                    Cash: 20000000,
+                    Damage: 0,
+                    Speed: 0
                 )
             },
 
             {
                 3, new EnemyInfo(
-                    Life: 300,
-                    Score: 500,
-                    Cash: 300,
-                    Damage: 50,
-                    Speed: 1.5f
+                    Life: 1,
+                    Score: 5000000000,
+                    Cash: 30000000,
+                    Damage: 0,
+                    Speed: 0
                 )
             },
         };
@@ -176,19 +176,19 @@ namespace SolarSystemDefense
             {
                 0, new FeatureInfo(
                     Name: "Earth",
-                    Price: 500,
+                    Price: 0,
                     Speed: 4,
-                    SpeedDamage: 25,
-                    Cooldown: 20
+                    SpeedDamage: 2500,
+                    Cooldown: 0
                 )
             },
 
             {
                 1, new FeatureInfo(
                     Name: "Black Hole",
-                    Price: 3500,
-                    ActionArea: 200,
-                    SpeedDamage: 50
+                    Price: 0,
+                    ActionArea: 20000,
+                    SpeedDamage: 5000
                 )
             },
         };
