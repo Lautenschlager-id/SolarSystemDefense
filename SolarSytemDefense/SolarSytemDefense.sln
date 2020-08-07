@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30320.27
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolarSytemDefense", "SolarSytemDefense.csproj", "{18210975-695A-4F6C-8262-93EC2D9E601D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{18210975-695A-4F6C-8262-93EC2D9E601D}.Debug|x86.ActiveCfg = Debug|x86
+		{18210975-695A-4F6C-8262-93EC2D9E601D}.Debug|x86.Build.0 = Debug|x86
+		{18210975-695A-4F6C-8262-93EC2D9E601D}.Release|x86.ActiveCfg = Release|x86
+		{18210975-695A-4F6C-8262-93EC2D9E601D}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {80EAF95E-2FAF-4372-8501-1DF055AA1D3D}
+	EndGlobalSection
+EndGlobal
