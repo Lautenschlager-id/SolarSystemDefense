@@ -60,34 +60,31 @@ namespace SolarSystemDefense
 					if (exportCooldown <= 0 && Internet.InternetConnection())
 						if (Map.Walkpoints.Count > 1)
 						{
-							object[] ExportedMaps = GetExportedMaps();
-							List<Info.MapData> Maps = (List<Info.MapData>)ExportedMaps[0];
+							List<Info.MapData> Maps = GetExportedMaps();
 
 							if (!Maps.Any(l => l.Walkpoints.SequenceEqual(Map.Walkpoints)))
 							{
-								exportCooldown = 1000;
-
-								Regex regex = new Regex("\"sha\":\"(.+?)\",");
-								Match match = regex.Match((string)ExportedMaps[1]);
+								exportCooldown = 2500;
 
 								Map.Code = Math.Max(999, Maps.Count > 0 ? Maps.Max(o => o.Code) : 0) + 1;
-								Maps.Add(Map);
-								mapCode.Text = "@" + Map.Code.ToString();
+								string finalMapCode = "@" + Map.Code.ToString();
 
-                                // Map in Clipboard
-                                System.Windows.Forms.Clipboard.SetText(Encoding.UTF8.GetString(Utils.toJSON(Map.GetType(), Map)));
-
-								string content = Convert.ToBase64String(Utils.toJSON(Maps.GetType(), Maps));
-
-								Info.GitHubJSONPut gJSON = new Info.GitHubJSONPut()
+								string result = Internet.HTTPPost(Info.DatabaseURL["WebServer"], new Info.WebServerJSONPut()
 								{
-									message = "Last update in " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " by " + Environment.MachineName.ToString() + " - @" + Map.Code,
-									sha = match.Groups[1].Value,
-									content = content
-								};
-								content = Encoding.UTF8.GetString(Utils.toJSON(gJSON.GetType(), gJSON));
+									machine_name = Environment.MachineName.ToString(),
+									map_code = finalMapCode,
+									map_content = Convert.ToBase64String(Utils.toJSON(Map.GetType(), Map))
+								});
+								Console.WriteLine(result);
 
-								Internet.HTTPPut(@"https://api.github.com/repos/SolarSystemDefense/gamedb/contents/ExportedMaps.json", content, Info.headers);
+								if (result == "200")
+								{
+									Maps.Add(Map);
+									mapCode.Text = finalMapCode;
+
+									// Map in Clipboard
+									System.Windows.Forms.Clipboard.SetText(Encoding.UTF8.GetString(Utils.toJSON(Map.GetType(), Map)));
+								}
 							}
 						}
 				}) },
@@ -108,10 +105,7 @@ namespace SolarSystemDefense
 					if (Regex.IsMatch(code, @"^@\d{4}$"))
 						if (Internet.InternetConnection())
 						{
-							object[] ExportedMaps = GetExportedMaps();
-							List<Info.MapData> Maps = (List<Info.MapData>)ExportedMaps[0];
-
-							Info.MapData search = Maps.Find(l => l.Code.ToString() == code.Substring(1));
+							Info.MapData search = GetExportedMaps().Find(l => l.Code.ToString() == code.Substring(1));
 
 							if (search != null)
 							{
@@ -171,17 +165,10 @@ namespace SolarSystemDefense
 			Main.GameBound = new Rectangle(0, 0, Main.ViewPort.Width - (int)ItemPanel.Size.X, Main.ViewPort.Height);
 		}
 
-		private object[] GetExportedMaps()
+		private List<Info.MapData> GetExportedMaps()
 		{
-			string ExportedMaps = Internet.HTTPGet(@"https://api.github.com/repos/SolarSystemDefense/gamedb/contents/ExportedMaps.json").ToString();
-
-			Regex regex = new Regex("\"content\":\"(.+?)\",");
-			Match match = regex.Match(ExportedMaps);
-
-			string currentContent = Encoding.UTF8.GetString(Convert.FromBase64String(match.Groups[1].Value.Replace("\\n", "\n")));
-
-			// List, Content
-			return new object[] { Utils.fromJSON(typeof(List<Info.MapData>), currentContent), ExportedMaps };
+			string ExportedMaps = Internet.HTTPGet(Info.DatabaseURL["UserMaps"]).ToString();
+			return (List<Info.MapData>)Utils.fromJSON(typeof(List<Info.MapData>), ExportedMaps);
 		}
 
 		public void AlignLineCounter()

@@ -15,7 +15,7 @@ namespace SolarSystemDefense
 			MapEditor,
 			Playing,
 		}
-		static GameState CurrentGameWindow = GameState.Presentation;
+		static GameState CurrentGameWindow = GameState.MapEditor;
 		public static GameState CurrentGameState
 		{
 			get
@@ -100,7 +100,7 @@ namespace SolarSystemDefense
 
 			if (Internet.InternetConnection())
 			{
-				string JSON = Internet.HTTPGet(@"https://raw.githubusercontent.com/SolarSystemDefense/gamedb/master/OfficialMaps.json");
+				string JSON = Internet.HTTPGet(Info.DatabaseURL["OfficialMaps"]);
 				Data.OfficialMaps = (List<Info.MapData>)Utils.fromJSON(type, JSON);
 			}
 			else

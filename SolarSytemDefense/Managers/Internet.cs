@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -18,7 +19,7 @@ namespace SolarSystemDefense
 		public static bool InternetConnection()
 		{
 			HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://g.cn/generate_204");
-			request.UserAgent = "XNA";
+			request.UserAgent = "MonoGame's SolarSystemDefense Project";
 			request.KeepAlive = false;
 			request.Timeout = 3000;
 
@@ -33,39 +34,36 @@ namespace SolarSystemDefense
 			}
 		}
 
-		public static string HTTPGet(string url, Dictionary<string, string> headers = null)
+		public static string HTTPGet(string url)
 		{
 			client.DefaultRequestHeaders.Clear();
-
-			if (headers != null)
-			{
-				if (headers.ContainsKey("User-Agent"))
-					client.DefaultRequestHeaders.Add("User-Agent", headers["User-Agent"]);
-
-				if (headers.ContainsKey("Token"))
-					client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("token", headers["Token"]);
-			}
+			client.DefaultRequestHeaders.Add("User-Agent", "MonoGame's SolarSystemDefense Project");
 
 			return client.GetStringAsync(url).Result;
 		}
-		public static string HTTPPut(string url, string data, Dictionary<string, string> headers)
+				
+		public static string HTTPPost(string url, Info.WebServerJSONPut content)
 		{
 			client.DefaultRequestHeaders.Clear();
-
+		
+			string data = Encoding.UTF8.GetString(Utils.toJSON(content.GetType(), content));
 			HttpContent body = new StringContent(data, Encoding.UTF8, "application/json");
 
-			if (headers.ContainsKey("User-Agent"))
-				client.DefaultRequestHeaders.Add("User-Agent", "SolarSystemDefense");
-
-			if (headers.ContainsKey("Token"))
-				client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("token", headers["Token"]);
-
-			HttpResponseMessage result = client.PutAsync(url, body).GetAwaiter().GetResult();
-			result.Content.Headers.ContentLength = result.Content.ToString().Length;
-
-			string resultContent = result.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-
-			return resultContent;
+			int tentative = 0;
+			do
+			{
+				try
+				{
+					HttpResponseMessage result = client.PostAsync(url, body).GetAwaiter().GetResult();
+					result.Content.Headers.ContentLength = result.Content.ToString().Length;
+					return result.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+				}
+				catch (Exception)
+				{
+					tentative++;
+				}
+			} while (tentative < 5);
+			return "failed";
 		}
 	}
 }

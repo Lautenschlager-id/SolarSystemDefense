@@ -62,3 +62,5 @@ monodroid*.msi
 *.VC.opendb
 
 dist
+
+private/

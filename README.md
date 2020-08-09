@@ -1,12 +1,10 @@
 ## SolarSystemDefense
 
 #### News
+- Database fixed
 - Source with several minor fixes, from layout to backend
 - Performance slightly improved
 - Ported from XNA to MonoGame (Windows only)
-
-#### To-do
-- Fix all DB issues
 
 #### Download
 - Patched version SOON

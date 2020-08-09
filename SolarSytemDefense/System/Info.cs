@@ -19,23 +19,17 @@ namespace SolarSystemDefense
 		}
 
 		[DataContract]
-		public class GitHubJSONPut
+		public class WebServerJSONPut
 		{
 			[DataMember]
-			public string message { get; set; }
+			public string machine_name { get; set; }
 
 			[DataMember]
-			public string sha { get; set; }
+			public string map_code { get; set; }
 
 			[DataMember]
-			public string content { get; set; }
+			public string map_content { get; set; }
 		}
-
-		public static Dictionary<string, string> headers = new Dictionary<string, string>()
-		{
-			{ "User-Agent", "Game"},
-			{ "Token", Encoding.UTF8.GetString(Convert.FromBase64String("ZDE2NDc0NDM1ZGNjODlmZGVlYTU1MGQ5OWI3ZTE0NmU1Mzk2NTIxMQ==")) }, // This is a shame
-		};
 
 		public static Dictionary<string, Color[]> Colors = new Dictionary<string, Color[]>()
 		{
@@ -52,6 +46,13 @@ namespace SolarSystemDefense
 			{ "Background", 0 },
 			{ "Middleground", .5f },
 			{ "Foreground", 1 },
+		};
+
+		public static Dictionary<string, string> DatabaseURL = new Dictionary<string, string>()
+		{
+			{ "WebServer", "https://mono-ssd-mapserver.000webhostapp.com/write.php" },
+			{ "UserMaps", "https://raw.githubusercontent.com/SolarSystemDefense/gamedb/master/ExportedMaps.json" },
+			{ "OfficialMaps", "https://raw.githubusercontent.com/SolarSystemDefense/gamedb/master/OfficialMaps.json" }
 		};
 	}
 }
