@@ -15,7 +15,7 @@ namespace SolarSystemDefense
 			MapEditor,
 			Playing,
 		}
-		static GameState CurrentGameWindow = GameState.MapEditor;
+		static GameState CurrentGameWindow = GameState.Presentation;
 		public static GameState CurrentGameState
 		{
 			get

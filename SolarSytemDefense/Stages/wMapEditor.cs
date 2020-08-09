@@ -75,7 +75,6 @@ namespace SolarSystemDefense
 									map_code = finalMapCode,
 									map_content = Convert.ToBase64String(Utils.toJSON(Map.GetType(), Map))
 								});
-								Console.WriteLine(result);
 
 								if (result == "200")
 								{
